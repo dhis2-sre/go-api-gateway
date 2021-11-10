@@ -1,0 +1,14 @@
+serverPort: 3128
+
+backends:
+  - http://localhost:8080
+
+rules:
+  - method: POST
+    pathPattern: ^\/health$
+    requestPerSecond: 1
+    burst: 2
+  - method: POST
+    pathPattern: ^\/some*.$
+    requestPerSecond: 1
+    burst: 2
