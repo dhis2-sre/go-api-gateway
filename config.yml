@@ -1,7 +1,10 @@
+# Sample configuration file tailored to work with Docker
+
 serverPort: 3128
 
 backends:
-  - http://localhost:8080
+  - http://backend0:8080
+  - http://backend1:8080
 
 rules:
   - method: POST
