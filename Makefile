@@ -12,4 +12,4 @@ dev:
 run:
 	go run .
 
-.PHONY: binary docker-image
+.PHONY: binary docker-image dev
