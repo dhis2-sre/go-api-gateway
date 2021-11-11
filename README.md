@@ -21,3 +21,7 @@ seq 10 | xargs -P 4 -I '{}' http post :8080/health
 
 # Credits
 * https://github.com/didip/tollbooth
+
+# TODO
+* Comment exported types and functions
+* Write tests
