@@ -31,6 +31,7 @@ func main() {
 	// TODO: This is only defined here because "configuration" is needed
 	handleRequest := func(res http.ResponseWriter, req *http.Request) {
 		backend := loadBalance(configuration.Backends)
+		log.Printf("%s %s -> %s", req.Method, req.URL.Path, backend)
 
 		backendUrl, _ := url.Parse(backend)
 		proxy := httputil.NewSingleHostReverseProxy(backendUrl)
