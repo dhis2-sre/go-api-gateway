@@ -5,6 +5,11 @@ services:
     build: .
     ports:
       - "8080:3128"
+    volumes:
+      - ./config.yml:/app/config.yml
+    depends_on:
+      - backend0
+      - backend1
 
   test:
     build:
