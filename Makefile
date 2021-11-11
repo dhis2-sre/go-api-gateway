@@ -7,7 +7,7 @@ docker-image:
 	IMAGE_TAG=$(tag) docker-compose build prod && IMAGE_TAG=$(tag) docker-compose push prod
 
 dev:
-	docker compose up --build dev
+	docker compose up --build dev backend0 backend1
 
 run:
 	go run .
