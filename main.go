@@ -32,8 +32,8 @@ func main() {
 	handleRequest := func(res http.ResponseWriter, req *http.Request) {
 		backend := loadBalance(configuration.Backends)
 
-		url, _ := url.Parse(backend)
-		proxy := httputil.NewSingleHostReverseProxy(url)
+		backendUrl, _ := url.Parse(backend)
+		proxy := httputil.NewSingleHostReverseProxy(backendUrl)
 		proxy.ServeHTTP(res, req)
 	}
 
