@@ -8,8 +8,7 @@ services:
     volumes:
       - ./config.yml:/app/config.yml
     depends_on:
-      - backend0
-      - backend1
+      - backend
 
   test:
     build:
@@ -28,13 +27,9 @@ services:
       - "8080:3128"
     volumes:
       - .:/src
-    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ."
+    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/go-rate-limit"
     depends_on:
-      - backend0
-      - backend1
+      - backend
 
-  backend0:
-    image: tons/whoami-go:0.4.0
-
-  backend1:
+  backend:
     image: tons/whoami-go:0.4.0

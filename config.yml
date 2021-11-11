@@ -2,9 +2,7 @@
 
 serverPort: 3128
 
-backends:
-  - http://backend0:8080
-  - http://backend1:8080
+backend: http://backend:8080
 
 rules:
   - method: POST

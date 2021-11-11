@@ -1,15 +1,15 @@
 tag ?= latest
 
+di:
+	wire gen ./pgk/di
+
 binary:
-	go build -o go-rate-limit -ldflags "-s -w" .
+	go build -o go-rate-limit -ldflags "-s -w" ./cmd/go-rate-limit
 
 docker-image:
 	IMAGE_TAG=$(tag) docker-compose build prod && IMAGE_TAG=$(tag) docker-compose push prod
 
 dev:
-	docker compose up --build dev backend0 backend1
-
-run:
-	go run .
+	docker compose up --build dev backend
 
 .PHONY: binary docker-image dev
