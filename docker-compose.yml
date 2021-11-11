@@ -23,7 +23,7 @@ services:
       - "8080:3128"
     volumes:
       - .:/src
-    command: reflex -r "\.go$$" -s -- sh -c "go run ."
+    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ."
     depends_on:
       - backend0
       - backend1
