@@ -12,4 +12,4 @@ RUN apk --no-cache -U upgrade
 WORKDIR /app
 COPY --from=build /app/go-rate-limit .
 USER guest
-CMD ["/app/whoami-go"]
+CMD ["/app/go-rate-limit"]
