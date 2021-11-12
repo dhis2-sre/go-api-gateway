@@ -1,4 +1,5 @@
 tag ?= latest
+clean-cmd = docker compose down --remove-orphans --volumes
 
 di:
 	wire gen ./pgk/di
@@ -11,5 +12,13 @@ docker-image:
 
 dev:
 	docker compose up --build dev backend
+
+test: clean
+	docker compose run --no-deps test
+	$(clean-cmd)
+
+clean:
+	$(clean-cmd)
+	go clean
 
 .PHONY: binary docker-image dev
