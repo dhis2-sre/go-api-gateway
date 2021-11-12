@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"github.com/dhis2-sre/go-rate-limite/pgk/config"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,16 +18,13 @@ func TestTransparentProxyHandler(t *testing.T) {
 	proxy := ProvideProxy(c)
 
 	req, err := http.NewRequest("GET", "/status/200", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
 	handler := http.HandlerFunc(proxy.TransparentProxyHandler)
 
 	handler.ServeHTTP(recorder, req)
 
-	if actual := recorder.Code; actual != expected {
-		t.Errorf("handler returned wrong actual code: got %v want %v", actual, expected)
-	}
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
 }

@@ -2,31 +2,28 @@ package rule
 
 import (
 	"github.com/dhis2-sre/go-rate-limite/pgk/config"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestPathMatch(t *testing.T) {
-	expectation := true
+	expected := true
 
 	rule := createRuleWithPathPattern("^\\/health$")
 
 	actual := rule.pathMatch("/health")
 
-	if actual != expectation {
-		t.Errorf("Expected %v but got %v", expectation, actual)
-	}
+	assert.Equal(t, expected, actual)
 }
 
 func TestPathNoMatch(t *testing.T) {
-	expectation := false
+	expected := false
 
 	rule := createRuleWithPathPattern("^\\/health$")
 
 	actual := rule.pathMatch("/health-no-match")
 
-	if actual != expectation {
-		t.Errorf("Expected %v but got %v", expectation, actual)
-	}
+	assert.Equal(t, expected, actual)
 }
 
 func createRuleWithPathPattern(pathPattern string) *Rule {
