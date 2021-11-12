@@ -5,20 +5,20 @@ import (
 	"regexp"
 )
 
-func ProvideConfig() (Config, error) {
+func ProvideConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 	viper.SetConfigType("yml")
 
-	var c Config
+	var c *Config
 	if err := viper.ReadInConfig(); err != nil {
-		return Config{}, err
+		return &Config{}, err
 	}
 
 	err := viper.Unmarshal(&c)
 	if err != nil {
-		return Config{}, err
+		return &Config{}, err
 	}
 
 	return c, nil

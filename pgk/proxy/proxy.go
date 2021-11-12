@@ -8,12 +8,12 @@ import (
 	"net/url"
 )
 
-func ProvideProxy(c config.Config) *Proxy {
+func ProvideProxy(c *config.Config) *Proxy {
 	return &Proxy{c}
 }
 
 type Proxy struct {
-	c config.Config
+	c *config.Config
 }
 
 func (p *Proxy) TransparentProxyHandler(w http.ResponseWriter, req *http.Request) {

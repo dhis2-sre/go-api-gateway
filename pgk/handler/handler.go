@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-func ProvideHandler(c config.Config, rules *rule.Rules, proxy *proxy.Proxy) Handler {
+func ProvideHandler(c *config.Config, rules *rule.Rules, proxy *proxy.Proxy) Handler {
 	return Handler{c, rules, proxy}
 }
 
 type Handler struct {
-	c     config.Config
+	c     *config.Config
 	rules *rule.Rules
 	proxy *proxy.Proxy
 }

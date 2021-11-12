@@ -12,11 +12,11 @@ import (
 )
 
 type Application struct {
-	Config  config.Config
+	Config  *config.Config
 	Handler handler.Handler
 }
 
-func ProvideApplication(c config.Config, h handler.Handler) Application {
+func ProvideApplication(c *config.Config, h handler.Handler) Application {
 	return Application{c, h}
 }
 
@@ -31,7 +31,7 @@ func GetApplication() Application {
 	return Application{}
 }
 
-func provideConfigWithoutError() config.Config {
+func provideConfigWithoutError() *config.Config {
 	c, err := config.ProvideConfig()
 	if err != nil {
 		log.Fatal(err)

@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-func ProvideRules(configuration config.Config) *Rules {
+func ProvideRules(c *config.Config) *Rules {
 	var rules []*Rule
-	for _, rule := range configuration.Rules {
+	for _, rule := range c.Rules {
 		lmt := newLimiter(rule)
 
-		p := proxy.ProvideProxy(configuration)
+		p := proxy.ProvideProxy(c)
 		rules = append(rules, &Rule{
 			Rule:    rule,
 			Handler: tollbooth.LimitFuncHandler(lmt, p.TransparentProxyHandler),
