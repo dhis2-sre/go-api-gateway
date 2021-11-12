@@ -1,18 +1,16 @@
 package handler
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/config"
 	"github.com/dhis2-sre/go-rate-limite/pgk/proxy"
 	"github.com/dhis2-sre/go-rate-limite/pgk/rule"
 	"net/http"
 )
 
-func ProvideHandler(c *config.Config, rules *rule.Rules, proxy *proxy.Proxy) Handler {
-	return Handler{c, rules, proxy}
+func ProvideHandler(rules *rule.Rules, proxy *proxy.Proxy) Handler {
+	return Handler{rules, proxy}
 }
 
 type Handler struct {
-	c     *config.Config
 	rules *rule.Rules
 	proxy *proxy.Proxy
 }

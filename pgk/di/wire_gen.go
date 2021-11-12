@@ -19,7 +19,7 @@ func GetApplication() Application {
 	config := provideConfigWithoutError()
 	rules := rule.ProvideRules(config)
 	proxyProxy := proxy.ProvideProxy(config)
-	handlerHandler := handler.ProvideHandler(config, rules, proxyProxy)
+	handlerHandler := handler.ProvideHandler(rules, proxyProxy)
 	application := ProvideApplication(config, handlerHandler)
 	return application
 }
