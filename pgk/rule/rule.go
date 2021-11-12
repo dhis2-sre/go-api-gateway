@@ -7,7 +7,6 @@ import (
 )
 
 type Rule struct {
-	// TODO: Is this a bad dependency? Should I just "explode" config.Rule
 	config.Rule
 	Handler http.Handler
 }
