@@ -27,7 +27,7 @@ services:
       - "8080:3128"
     volumes:
       - .:/src
-    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/go-rate-limit"
+    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/serve"
     depends_on:
       - backend
 

@@ -5,7 +5,7 @@ RUN go get github.com/cespare/reflex
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o /app/go-rate-limit -ldflags "-s -w" ./cmd/go-rate-limit
+RUN go build -o /app/go-rate-limit -ldflags "-s -w" ./cmd/serve
 
 FROM alpine:3.14
 RUN apk --no-cache -U upgrade
