@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/spf13/viper"
-	"regexp"
 )
 
 func ProvideConfig() (*Config, error) {
@@ -35,12 +34,4 @@ type Rule struct {
 	PathPattern      string
 	RequestPerSecond float64
 	Burst            int
-}
-
-func (r *Rule) pathMatch(path string) bool {
-	match, err := regexp.MatchString(r.PathPattern, path)
-	if err != nil {
-		return false
-	}
-	return match
 }
