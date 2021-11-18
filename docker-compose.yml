@@ -33,3 +33,6 @@ services:
 
   backend:
     image: tons/whoami-go:0.4.0
+
+  backend1:
+    image: tons/whoami-go:0.4.0

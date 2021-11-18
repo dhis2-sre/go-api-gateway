@@ -32,6 +32,7 @@ type Config struct {
 type Rule struct {
 	Method           string
 	PathPattern      string
+	Backend          string
 	RequestPerSecond float64
 	Burst            int
 }

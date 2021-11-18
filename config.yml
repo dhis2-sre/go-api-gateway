@@ -7,9 +7,13 @@ backend: http://backend:8080
 rules:
   - method: POST
     pathPattern: ^\/health$
+    backend: http://backend:8080
+#    backend: http://health.svc.cluster.local
+#    authentication: ?
     requestPerSecond: 1
     burst: 2
   - method: POST
     pathPattern: ^\/some*.$
+    backend: http://backend1:8080
     requestPerSecond: 1
     burst: 2

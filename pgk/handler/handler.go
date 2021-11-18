@@ -19,6 +19,7 @@ func (h *Handler) RateLimitingProxyHandler(w http.ResponseWriter, r *http.Reques
 	if match, rateLimitingProxyHandler := h.rules.Match(r); match {
 		rateLimitingProxyHandler.ServeHTTP(w, r)
 	} else {
+		// TODO: Send 404
 		h.proxy.TransparentProxyHandler(w, r)
 	}
 }

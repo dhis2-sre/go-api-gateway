@@ -13,7 +13,14 @@ func ProvideRules(c *config.Config) *Rules {
 	for _, rule := range c.Rules {
 		lmt := newLimiter(rule)
 
+		//		backendUrl, err := url.Parse(rule.Backend)
+		//		if err != nil {
+		//			log.Fatal(err)
+		//		}
 		p := proxy.ProvideProxy(c)
+		//		p.BackendUrl = backendUrl
+		p.SetBackendUrl(rule.Backend)
+
 		rules = append(rules, &Rule{
 			Rule:    rule,
 			Handler: tollbooth.LimitFuncHandler(lmt, p.TransparentProxyHandler),
