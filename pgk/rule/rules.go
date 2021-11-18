@@ -27,7 +27,9 @@ func ProvideRules(c *config.Config) *Rules {
 
 func newLimiter(rule config.Rule) *limiter.Limiter {
 	lmt := tollbooth.NewLimiter(rule.RequestPerSecond, nil)
-	lmt.SetMethods([]string{rule.Method})
+	if rule.Method != "" {
+		lmt.SetMethods([]string{rule.Method})
+	}
 	lmt.SetBurst(rule.Burst)
 	return lmt
 }
@@ -38,7 +40,7 @@ type Rules struct {
 
 func (r Rules) Match(req *http.Request) (bool, http.Handler) {
 	for _, rule := range r.Rules {
-		if rule.pathMatch(req.URL.Path) {
+		if rule.match(req) {
 			return true, rule.Handler
 		}
 	}
