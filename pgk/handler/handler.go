@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/proxy"
-	"github.com/dhis2-sre/go-rate-limite/pgk/rule"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"net/http"
 )
 

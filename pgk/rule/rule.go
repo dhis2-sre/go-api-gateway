@@ -1,7 +1,7 @@
 package rule
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/config"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"net/http"
 	"regexp"
 )

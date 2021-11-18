@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/config"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"

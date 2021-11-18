@@ -3,10 +3,10 @@
 package di
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/config"
-	"github.com/dhis2-sre/go-rate-limite/pgk/handler"
-	"github.com/dhis2-sre/go-rate-limite/pgk/proxy"
-	"github.com/dhis2-sre/go-rate-limite/pgk/rule"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/handler"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"github.com/google/wire"
 	"log"
 )
