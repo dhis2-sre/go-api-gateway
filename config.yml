@@ -2,18 +2,34 @@
 
 serverPort: 3128
 
-backend: http://backend:8080
+authentication:
+  jwt:
+    publicKey: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzob0lx9XIOj56FzAZlEI
+      VZTzBJUMe9bnL9FZtk3r+3eiqPU5eChktukG4UYbBFIaF+tphyFnVncvsmTVh1dE
+      NTFmTK4oDmzkuvqhmVoXTUuj/YFQWqH+pX2774McsrXpG0vj4l85u/ElSDyGpFf4
+      BSNyCv0Zr9rg2Khit7GdEde3bsv0k4mNV4SZGGKoHnu4XpTEsPNd/Lbm7tF21Xbn
+      /vcx3eE/KOkp1ZH7f9L6Stn12ITmSa+g2wMVvIsJJ3ngXHFDb/x52PCYF6bZZ1kF
+      /OobaMgtmepJXCMj6zu+ZnsqM5/8FaNcAFjmMwSshhhIB/tdvwifBXcJ18B7P+tT
+      TwIDAQAB
+      -----END PUBLIC KEY-----
 
 rules:
-  - method: POST
+  - method: GET
     pathPattern: ^\/health$
     backend: http://backend:8080
-#    backend: http://health.svc.cluster.local
-#    authentication: ?
-    requestPerSecond: 1
-    burst: 2
+    authentication: jwt
+    requestPerSecond: 100
+    burst: 20
   - method: POST
-    pathPattern: ^\/some*.$
+    pathPattern: ^\/*.
     backend: http://backend1:8080
-    requestPerSecond: 1
-    burst: 2
+    requestPerSecond: 100
+    burst: 20
+# This rule will never be matched... because the above will take precedence
+  - method: POST
+    pathPattern: ^\/some*.
+    backend: http://backend:8080
+    requestPerSecond: 100
+    burst: 20

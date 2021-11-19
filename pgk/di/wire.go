@@ -5,7 +5,6 @@ package di
 import (
 	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/dhis2-sre/go-rate-limiter/pgk/handler"
-	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
 	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"github.com/google/wire"
 	"log"
@@ -24,7 +23,6 @@ func GetApplication() Application {
 	wire.Build(
 		ProvideApplication,
 		provideConfigWithoutError,
-		proxy.ProvideProxy,
 		rule.ProvideRules,
 		handler.ProvideHandler,
 	)

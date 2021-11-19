@@ -8,7 +8,6 @@ package di
 import (
 	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/dhis2-sre/go-rate-limiter/pgk/handler"
-	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
 	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"log"
 )
@@ -18,8 +17,7 @@ import (
 func GetApplication() Application {
 	config := provideConfigWithoutError()
 	rules := rule.ProvideRules(config)
-	proxyProxy := proxy.ProvideProxy(config)
-	handlerHandler := handler.ProvideHandler(rules, proxyProxy)
+	handlerHandler := handler.ProvideHandler(config, rules)
 	application := ProvideApplication(config, handlerHandler)
 	return application
 }

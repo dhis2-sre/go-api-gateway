@@ -1,25 +1,68 @@
 package handler
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
+	"errors"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
+	"github.com/lestrrat-go/jwx/jwa"
+	"github.com/lestrrat-go/jwx/jwt"
 	"net/http"
+	"strings"
 )
 
-func ProvideHandler(rules *rule.Rules, proxy *proxy.Proxy) Handler {
-	return Handler{rules, proxy}
+func ProvideHandler(c *config.Config, rules *rule.Rules) Handler {
+	return Handler{c, rules}
 }
 
 type Handler struct {
+	c     *config.Config
 	rules *rule.Rules
-	proxy *proxy.Proxy
 }
 
-func (h *Handler) RateLimitingProxyHandler(w http.ResponseWriter, r *http.Request) {
-	if match, rateLimitingProxyHandler := h.rules.Match(r); match {
-		rateLimitingProxyHandler.ServeHTTP(w, r)
-	} else {
-		// TODO: Send 404
-		h.proxy.TransparentProxyHandler(w, r)
+func (h *Handler) RateLimitingProxyHandler(w http.ResponseWriter, req *http.Request) {
+	if match, r := h.rules.Match(req); match {
+		if r.Authentication == "jwt" {
+			valid, err := h.validateRequest(req)
+			if !valid || err != nil {
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+		}
+		// This shouldn't be necessary if we're running in cluster only accessing services
+		fixHost(req, r.Backend)
+		r.Handler.ServeHTTP(w, req)
+		return
 	}
+	w.WriteHeader(http.StatusNotFound)
+}
+
+func fixHost(req *http.Request, ruleBackend string) {
+	if !strings.HasSuffix(req.Host, ruleBackend) {
+		var backend string
+		if strings.HasPrefix(ruleBackend, "https://") {
+			backend = strings.TrimPrefix(ruleBackend, "https://")
+		}
+		if strings.HasPrefix(ruleBackend, "http://") {
+			backend = strings.TrimPrefix(ruleBackend, "http://")
+		}
+		req.Host = backend
+	}
+}
+
+func (h *Handler) validateRequest(req *http.Request) (bool, error) {
+	authorizationHeader := req.Header.Get("Authorization")
+	if !strings.HasPrefix(authorizationHeader, "Bearer") {
+		return false, errors.New("no bearer token prefix found in header")
+	}
+	tokenString := strings.TrimPrefix(authorizationHeader, "Bearer")
+
+	_, err := jwt.Parse(
+		[]byte(tokenString),
+		jwt.WithValidate(true),
+		jwt.WithVerify(jwa.RS256, h.c.Authentication.Jwt.PublicKey),
+	)
+	if err != nil {
+		return true, nil
+	}
+	return false, err
 }

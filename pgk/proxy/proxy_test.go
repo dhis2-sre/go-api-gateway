@@ -1,27 +1,28 @@
 package proxy
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
 func TestTransparentProxyHandler(t *testing.T) {
 	expected := http.StatusOK
 
-	c := &config.Config{
-		Backend: "https://httpbin.org",
-	}
+	backend := "https://httpbin.org"
 
-	proxy := ProvideProxy(c)
+	backendUrl, err := url.Parse(backend)
+	assert.NoError(t, err)
+
+	proxy := ProvideTransparentProxy(backendUrl)
 
 	req, err := http.NewRequest("GET", "/status/200", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(proxy.TransparentProxyHandler)
+	handler := http.HandlerFunc(proxy)
 
 	handler.ServeHTTP(recorder, req)
 

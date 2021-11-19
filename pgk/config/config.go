@@ -24,15 +24,24 @@ func ProvideConfig() (*Config, error) {
 }
 
 type Config struct {
-	ServerPort string
-	Backend    string
-	Rules      []Rule
+	ServerPort     string
+	Authentication Authentication
+	Rules          []Rule
+}
+
+type Authentication struct {
+	Jwt Jwt
+}
+
+type Jwt struct {
+	PublicKey string
 }
 
 type Rule struct {
 	Method           string
 	PathPattern      string
 	Backend          string
+	Authentication   string
 	RequestPerSecond float64
 	Burst            int
 }

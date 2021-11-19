@@ -5,7 +5,9 @@ import (
 	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
+	"log"
 	"net/http"
+	"net/url"
 )
 
 func ProvideRules(c *config.Config) *Rules {
@@ -13,17 +15,14 @@ func ProvideRules(c *config.Config) *Rules {
 	for _, rule := range c.Rules {
 		lmt := newLimiter(rule)
 
-		//		backendUrl, err := url.Parse(rule.Backend)
-		//		if err != nil {
-		//			log.Fatal(err)
-		//		}
-		p := proxy.ProvideProxy(c)
-		//		p.BackendUrl = backendUrl
-		p.SetBackendUrl(rule.Backend)
+		backend, err := url.Parse(rule.Backend)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		rules = append(rules, &Rule{
 			Rule:    rule,
-			Handler: tollbooth.LimitFuncHandler(lmt, p.TransparentProxyHandler),
+			Handler: tollbooth.LimitFuncHandler(lmt, proxy.ProvideTransparentProxy(backend)),
 		})
 	}
 
@@ -45,10 +44,10 @@ type Rules struct {
 	Rules []*Rule
 }
 
-func (r Rules) Match(req *http.Request) (bool, http.Handler) {
+func (r Rules) Match(req *http.Request) (bool, *Rule) {
 	for _, rule := range r.Rules {
 		if rule.match(req) {
-			return true, rule.Handler
+			return true, rule
 		}
 	}
 	return false, nil
