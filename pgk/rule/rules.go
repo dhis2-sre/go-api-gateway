@@ -1,11 +1,13 @@
 package rule
 
 import (
+	"net/http"
+
+	"github.com/didip/tollbooth/v6"
+
 	"github.com/dhis2-sre/go-rate-limite/pgk/config"
 	"github.com/dhis2-sre/go-rate-limite/pgk/proxy"
-	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
-	"net/http"
 )
 
 func ProvideRules(c *config.Config) *Rules {
@@ -13,10 +15,9 @@ func ProvideRules(c *config.Config) *Rules {
 	for _, rule := range c.Rules {
 		lmt := newLimiter(rule)
 
-		p := proxy.ProvideProxy(c)
 		rules = append(rules, &Rule{
 			Rule:    rule,
-			Handler: tollbooth.LimitFuncHandler(lmt, p.TransparentProxyHandler),
+			Handler: tollbooth.LimitFuncHandler(lmt, proxy.TransparentProxy(c.Backend).ServeHTTP),
 		})
 	}
 

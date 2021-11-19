@@ -1,24 +1,19 @@
 package handler
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/proxy"
-	"github.com/dhis2-sre/go-rate-limite/pgk/rule"
 	"net/http"
+
+	"github.com/dhis2-sre/go-rate-limite/pgk/rule"
 )
 
-func ProvideHandler(rules *rule.Rules, proxy *proxy.Proxy) Handler {
-	return Handler{rules, proxy}
-}
-
-type Handler struct {
-	rules *rule.Rules
-	proxy *proxy.Proxy
-}
-
-func (h *Handler) RateLimitingProxyHandler(w http.ResponseWriter, r *http.Request) {
-	if match, rateLimitingProxyHandler := h.rules.Match(r); match {
-		rateLimitingProxyHandler.ServeHTTP(w, r)
-	} else {
-		h.proxy.TransparentProxyHandler(w, r)
+func RateLimit(rules *rule.Rules) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if ok, h := rules.Match(r); ok {
+				h.ServeHTTP(w, r)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
 	}
 }
