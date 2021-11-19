@@ -2,7 +2,7 @@
 
 serverPort: 3128
 
-backend: http://localhost:2525
+backend: http://backend:8080
 
 rules:
   - method: POST
