@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/di"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/di"
 	"log"
 	"net/http"
 )

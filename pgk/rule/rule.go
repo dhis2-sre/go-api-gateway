@@ -1,7 +1,7 @@
 package rule
 
 import (
-	"github.com/dhis2-sre/go-rate-limite/pgk/config"
+	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"net/http"
 	"regexp"
 )
@@ -11,10 +11,10 @@ type Rule struct {
 	Handler http.Handler
 }
 
-func (r *Rule) pathMatch(path string) bool {
-	match, err := regexp.MatchString(r.PathPattern, path)
+func (r *Rule) match(req *http.Request) bool {
+	match, err := regexp.MatchString(r.PathPattern, req.URL.Path)
 	if err != nil {
 		return false
 	}
-	return match
+	return match && (req.Method == r.Method || r.Method == "")
 }
