@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-func TransparentProxy(backend string) http.Handler {
+func Transparently(backend string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		log.Printf("%s %s -> %s", req.Method, req.URL.Path, backend)
 

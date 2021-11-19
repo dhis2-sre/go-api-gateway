@@ -1,4 +1,4 @@
-package handler
+package rate
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/dhis2-sre/go-rate-limite/pgk/rule"
 )
 
-func RateLimit(rules *rule.Rules) func(http.Handler) http.Handler {
+func Limit(rules *rule.Rules) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if ok, h := rules.Match(r); ok {
