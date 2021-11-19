@@ -10,30 +10,23 @@ import (
 	"strings"
 )
 
-func ProvideHandler(c *config.Config, rules *rule.Rules) Handler {
-	return Handler{c, rules}
-}
-
-type Handler struct {
-	c     *config.Config
-	rules *rule.Rules
-}
-
-func (h *Handler) RateLimitingProxyHandler(w http.ResponseWriter, req *http.Request) {
-	if match, r := h.rules.Match(req); match {
-		if r.Authentication == "jwt" {
-			valid, err := h.validateRequest(req)
-			if !valid || err != nil {
-				w.WriteHeader(http.StatusForbidden)
-				return
+func ProvideHandler(c *config.Config, rules *rule.Rules) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		if match, r := rules.Match(req); match {
+			if r.Authentication == "jwt" {
+				valid, err := validateRequest(c.Authentication.Jwt.PublicKey, req)
+				if !valid || err != nil {
+					w.WriteHeader(http.StatusForbidden)
+					return
+				}
 			}
+			// This shouldn't be necessary if we're running in cluster only accessing services
+			fixHost(req, r.Backend)
+			r.Handler.ServeHTTP(w, req)
+			return
 		}
-		// This shouldn't be necessary if we're running in cluster only accessing services
-		fixHost(req, r.Backend)
-		r.Handler.ServeHTTP(w, req)
-		return
+		w.WriteHeader(http.StatusNotFound)
 	}
-	w.WriteHeader(http.StatusNotFound)
 }
 
 func fixHost(req *http.Request, ruleBackend string) {
@@ -49,7 +42,7 @@ func fixHost(req *http.Request, ruleBackend string) {
 	}
 }
 
-func (h *Handler) validateRequest(req *http.Request) (bool, error) {
+func validateRequest(publicKey string, req *http.Request) (bool, error) {
 	authorizationHeader := req.Header.Get("Authorization")
 	if !strings.HasPrefix(authorizationHeader, "Bearer") {
 		return false, errors.New("no bearer token prefix found in header")
@@ -59,7 +52,7 @@ func (h *Handler) validateRequest(req *http.Request) (bool, error) {
 	_, err := jwt.Parse(
 		[]byte(tokenString),
 		jwt.WithValidate(true),
-		jwt.WithVerify(jwa.RS256, h.c.Authentication.Jwt.PublicKey),
+		jwt.WithVerify(jwa.RS256, publicKey),
 	)
 	if err != nil {
 		return true, nil

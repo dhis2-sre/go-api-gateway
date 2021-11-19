@@ -8,14 +8,15 @@ import (
 	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"github.com/google/wire"
 	"log"
+	"net/http"
 )
 
 type Application struct {
 	Config  *config.Config
-	Handler handler.Handler
+	Handler http.HandlerFunc
 }
 
-func ProvideApplication(c *config.Config, h handler.Handler) Application {
+func ProvideApplication(c *config.Config, h http.HandlerFunc) Application {
 	return Application{c, h}
 }
 

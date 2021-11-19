@@ -10,8 +10,6 @@ func main() {
 	app := di.GetApplication()
 
 	port := app.Config.ServerPort
-	handler := http.HandlerFunc(app.Handler.RateLimitingProxyHandler)
-
 	log.Println("Listening on port: " + port)
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	log.Fatal(http.ListenAndServe(":"+port, app.Handler))
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/dhis2-sre/go-rate-limiter/pgk/handler"
 	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"log"
+	"net/http"
 )
 
 // Injectors from wire.go:
@@ -17,8 +18,8 @@ import (
 func GetApplication() Application {
 	config := provideConfigWithoutError()
 	rules := rule.ProvideRules(config)
-	handlerHandler := handler.ProvideHandler(config, rules)
-	application := ProvideApplication(config, handlerHandler)
+	handlerFunc := handler.ProvideHandler(config, rules)
+	application := ProvideApplication(config, handlerFunc)
 	return application
 }
 
@@ -26,10 +27,10 @@ func GetApplication() Application {
 
 type Application struct {
 	Config  *config.Config
-	Handler handler.Handler
+	Handler http.HandlerFunc
 }
 
-func ProvideApplication(c *config.Config, h handler.Handler) Application {
+func ProvideApplication(c *config.Config, h http.HandlerFunc) Application {
 	return Application{c, h}
 }
 

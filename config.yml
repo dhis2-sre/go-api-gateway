@@ -33,3 +33,8 @@ rules:
     backend: http://backend:8080
     requestPerSecond: 100
     burst: 20
+  - pathPattern: ^\/skaffold*.
+    backend: https://api.im.feature.test.c.dhis2.org
+    authentication: jwt
+    requestPerSecond: 100
+    burst: 20
