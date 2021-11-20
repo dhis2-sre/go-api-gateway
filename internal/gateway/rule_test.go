@@ -1,7 +1,6 @@
 package gateway
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/url"
@@ -70,7 +69,7 @@ func TestRuleWithoutMethod(t *testing.T) {
 
 func createRuleWithPathPattern(method, pathPattern string) *Rule {
 	rule := &Rule{
-		Rule: config.Rule{
+		ConfigRule: ConfigRule{
 			Method:           method,
 			PathPattern:      pathPattern,
 			RequestPerSecond: 0,

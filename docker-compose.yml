@@ -1,7 +1,7 @@
 version: "3.6"
 services:
   prod:
-    image: dhis2/go-rate-limit:${IMAGE_TAG:-latest}
+    image: dhis2/go-api-gateway:${IMAGE_TAG:-latest}
     build: .
     ports:
       - "8080:3128"
