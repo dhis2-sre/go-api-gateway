@@ -20,7 +20,7 @@ func ProvideHandler(c *config.Config, rules *rule.Rules) http.HandlerFunc {
 					return
 				}
 			}
-			// This shouldn't be necessary if we're running in cluster only accessing services
+			// TODO: This shouldn't be necessary if we're running in cluster only accessing services
 			fixHost(req, r.Backend)
 			r.Handler.ServeHTTP(w, req)
 			return
