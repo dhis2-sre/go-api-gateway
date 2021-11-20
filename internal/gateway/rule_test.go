@@ -1,4 +1,4 @@
-package rule
+package gateway
 
 import (
 	"github.com/dhis2-sre/go-rate-limiter/pgk/config"

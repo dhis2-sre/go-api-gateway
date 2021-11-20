@@ -1,13 +1,12 @@
-package rule
+package gateway
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"net/http"
 	"regexp"
 )
 
 type Rule struct {
-	config.Rule
+	ConfigRule
 	Handler http.Handler
 }
 

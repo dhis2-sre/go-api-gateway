@@ -1,4 +1,4 @@
-package config
+package gateway
 
 import (
 	"github.com/spf13/viper"
@@ -26,7 +26,7 @@ func ProvideConfig() (*Config, error) {
 type Config struct {
 	ServerPort     string
 	Authentication Authentication
-	Rules          []Rule
+	Rules          []ConfigRule
 }
 
 type Authentication struct {
@@ -37,7 +37,7 @@ type Jwt struct {
 	PublicKey string
 }
 
-type Rule struct {
+type ConfigRule struct {
 	Method           string
 	PathPattern      string
 	Backend          string

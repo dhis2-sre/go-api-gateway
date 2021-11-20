@@ -1,37 +1,34 @@
-package rule
+package gateway
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
-	"github.com/dhis2-sre/go-rate-limiter/pgk/proxy"
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
-	"log"
 	"net/http"
 	"net/url"
 )
 
-func ProvideRouter(c *config.Config) *Router {
+func ProvideRouter(c *Config) (*Router, error) {
 	var rules []*Rule
 	for _, rule := range c.Rules {
 		lmt := newLimiter(rule)
 
 		backend, err := url.Parse(rule.Backend)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		rules = append(rules, &Rule{
-			Rule:    rule,
-			Handler: tollbooth.LimitFuncHandler(lmt, proxy.ProvideTransparentProxy(backend)),
+			ConfigRule: rule,
+			Handler:    tollbooth.LimitFuncHandler(lmt, ProvideTransparentProxy(backend)),
 		})
 	}
 
 	return &Router{
 		Rules: rules,
-	}
+	}, nil
 }
 
-func newLimiter(rule config.Rule) *limiter.Limiter {
+func newLimiter(rule ConfigRule) *limiter.Limiter {
 	lmt := tollbooth.NewLimiter(rule.RequestPerSecond, nil)
 	if rule.Method != "" {
 		lmt.SetMethods([]string{rule.Method})

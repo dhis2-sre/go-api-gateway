@@ -1,7 +1,6 @@
-package rule
+package gateway
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/url"
@@ -9,14 +8,15 @@ import (
 )
 
 func TestMatch(t *testing.T) {
-	rule := &config.Rule{
+	rule := &ConfigRule{
 		PathPattern: "^\\/health$",
 	}
 
-	configRules := []config.Rule{*rule}
-	c := &config.Config{Rules: configRules}
+	configRules := []ConfigRule{*rule}
+	c := &Config{Rules: configRules}
 
-	router := ProvideRouter(c)
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
 
 	u, err := url.Parse("http://backend/health")
 	assert.NoError(t, err)
@@ -30,14 +30,15 @@ func TestMatch(t *testing.T) {
 }
 
 func TestNoMatch(t *testing.T) {
-	rule := &config.Rule{
+	rule := &ConfigRule{
 		PathPattern: "^\\/health$",
 	}
 
-	configRules := []config.Rule{*rule}
-	c := &config.Config{Rules: configRules}
+	configRules := []ConfigRule{*rule}
+	c := &Config{Rules: configRules}
 
-	router := ProvideRouter(c)
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
 
 	u, err := url.Parse("http://backend/health-no-match")
 	assert.NoError(t, err)

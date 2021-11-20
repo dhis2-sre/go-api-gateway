@@ -1,16 +1,14 @@
-package handler
+package gateway
 
 import (
 	"errors"
-	"github.com/dhis2-sre/go-rate-limiter/pgk/config"
-	"github.com/dhis2-sre/go-rate-limiter/pgk/rule"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwt"
 	"net/http"
 	"strings"
 )
 
-func ProvideHandler(c *config.Config, router *rule.Router) http.HandlerFunc {
+func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		if match, r := router.Match(req); match {
 			if r.Authentication == "jwt" {

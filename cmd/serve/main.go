@@ -1,15 +1,25 @@
 package main
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/pgk/di"
+	"github.com/dhis2-sre/go-rate-limiter/internal/gateway"
 	"log"
 	"net/http"
 )
 
 func main() {
-	app := di.GetApplication()
+	config, err := gateway.ProvideConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	port := app.Config.ServerPort
+	router, err := gateway.ProvideRouter(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	handler := gateway.ProvideHandler(config, router)
+
+	port := config.ServerPort
 	log.Println("Listening on port: " + port)
-	log.Fatal(http.ListenAndServe(":"+port, app.Handler))
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
