@@ -1,9 +1,6 @@
 tag ?= latest
 clean-cmd = docker compose down --remove-orphans --volumes
 
-di:
-	wire gen ./pgk/di
-
 binary:
 	go build -o go-api-gateway -ldflags "-s -w" ./cmd/serve
 
