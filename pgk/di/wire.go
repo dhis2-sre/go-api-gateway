@@ -24,7 +24,7 @@ func GetApplication() Application {
 	wire.Build(
 		ProvideApplication,
 		provideConfigWithoutError,
-		rule.ProvideRules,
+		rule.ProvideRouter,
 		handler.ProvideHandler,
 	)
 	return Application{}

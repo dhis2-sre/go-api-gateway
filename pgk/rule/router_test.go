@@ -16,13 +16,13 @@ func TestMatch(t *testing.T) {
 	configRules := []config.Rule{*rule}
 	c := &config.Config{Rules: configRules}
 
-	rules := ProvideRules(c)
+	router := ProvideRouter(c)
 
 	u, err := url.Parse("http://backend/health")
 	assert.NoError(t, err)
 
 	req := &http.Request{URL: u}
-	actual, _ := rules.Match(req)
+	actual, _ := router.Match(req)
 
 	expected := true
 
@@ -37,13 +37,13 @@ func TestNoMatch(t *testing.T) {
 	configRules := []config.Rule{*rule}
 	c := &config.Config{Rules: configRules}
 
-	rules := ProvideRules(c)
+	router := ProvideRouter(c)
 
 	u, err := url.Parse("http://backend/health-no-match")
 	assert.NoError(t, err)
 
 	req := &http.Request{URL: u}
-	actual, _ := rules.Match(req)
+	actual, _ := router.Match(req)
 
 	expected := false
 

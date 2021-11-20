@@ -10,9 +10,9 @@ import (
 	"strings"
 )
 
-func ProvideHandler(c *config.Config, rules *rule.Rules) http.HandlerFunc {
+func ProvideHandler(c *config.Config, router *rule.Router) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		if match, r := rules.Match(req); match {
+		if match, r := router.Match(req); match {
 			if r.Authentication == "jwt" {
 				valid, err := validateRequest(c.Authentication.Jwt.PublicKey, req)
 				if !valid || err != nil {

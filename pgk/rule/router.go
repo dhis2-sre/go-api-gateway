@@ -10,7 +10,7 @@ import (
 	"net/url"
 )
 
-func ProvideRules(c *config.Config) *Rules {
+func ProvideRouter(c *config.Config) *Router {
 	var rules []*Rule
 	for _, rule := range c.Rules {
 		lmt := newLimiter(rule)
@@ -26,7 +26,7 @@ func ProvideRules(c *config.Config) *Rules {
 		})
 	}
 
-	return &Rules{
+	return &Router{
 		Rules: rules,
 	}
 }
@@ -40,11 +40,11 @@ func newLimiter(rule config.Rule) *limiter.Limiter {
 	return lmt
 }
 
-type Rules struct {
+type Router struct {
 	Rules []*Rule
 }
 
-func (r Rules) Match(req *http.Request) (bool, *Rule) {
+func (r Router) Match(req *http.Request) (bool, *Rule) {
 	for _, rule := range r.Rules {
 		if rule.match(req) {
 			return true, rule

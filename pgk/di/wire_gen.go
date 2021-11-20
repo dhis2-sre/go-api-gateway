@@ -17,8 +17,8 @@ import (
 
 func GetApplication() Application {
 	config := provideConfigWithoutError()
-	rules := rule.ProvideRules(config)
-	handlerFunc := handler.ProvideHandler(config, rules)
+	router := rule.ProvideRouter(config)
+	handlerFunc := handler.ProvideHandler(config, router)
 	application := ProvideApplication(config, handlerFunc)
 	return application
 }
