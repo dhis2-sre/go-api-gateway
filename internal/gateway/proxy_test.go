@@ -22,9 +22,7 @@ func TestTransparentProxyHandler(t *testing.T) {
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(proxy)
-
-	handler.ServeHTTP(recorder, req)
+	proxy.ServeHTTP(recorder, req)
 
 	actual := recorder.Code
 	assert.Equal(t, expected, actual)
