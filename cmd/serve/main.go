@@ -19,7 +19,22 @@ func main() {
 
 	handler := gateway.ProvideHandler(config, router)
 
+	printRules(router)
+
 	port := config.ServerPort
 	log.Println("Listening on port: " + port)
 	log.Fatal(http.ListenAndServe(":"+port, handler))
+}
+
+func printRules(router *gateway.Router) {
+	log.Println("Rules:")
+	for _, rule := range router.Rules {
+		var method string
+		if rule.Method == "" {
+			method = "*"
+		} else {
+			method = rule.Method
+		}
+		log.Printf("%s %s -> %s - limit(%.2f, %d)", method, rule.PathPattern, rule.Backend, rule.RequestPerSecond, rule.Burst)
+	}
 }
