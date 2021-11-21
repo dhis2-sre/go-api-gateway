@@ -10,9 +10,8 @@ import (
 func ProvideRouter(c *Config) (*Router, error) {
 	var rules []*Rule
 	for _, rule := range c.Rules {
-		lmt := newLimiter(rule)
 
-		backend, err := url.Parse(rule.Backend)
+		handler, err := newHandler(rule)
 		if err != nil {
 			return nil, err
 		}
@@ -23,13 +22,28 @@ func ProvideRouter(c *Config) (*Router, error) {
 
 		rules = append(rules, &Rule{
 			ConfigRule: rule,
-			Handler:    tollbooth.LimitFuncHandler(lmt, provideTransparentProxy(backend)),
+			Handler:    handler,
 		})
 	}
 
 	return &Router{
 		Rules: rules,
 	}, nil
+}
+
+func newHandler(rule ConfigRule) (http.Handler, error) {
+	backend, err := url.Parse(rule.Backend)
+	if err != nil {
+		return nil, err
+	}
+
+	transparentProxy := provideTransparentProxy(backend)
+	handler := http.Handler(transparentProxy)
+	if rule.RequestPerSecond != 0 {
+		lmt := newLimiter(rule)
+		handler = tollbooth.LimitFuncHandler(lmt, transparentProxy)
+	}
+	return handler, nil
 }
 
 func newLimiter(rule ConfigRule) *limiter.Limiter {
