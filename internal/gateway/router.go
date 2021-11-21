@@ -17,6 +17,10 @@ func ProvideRouter(c *Config) (*Router, error) {
 			return nil, err
 		}
 
+		if c.BasePath != "" {
+			rule.PathPrefix = c.BasePath + rule.PathPrefix
+		}
+
 		rules = append(rules, &Rule{
 			ConfigRule: rule,
 			Handler:    tollbooth.LimitFuncHandler(lmt, provideTransparentProxy(backend)),
