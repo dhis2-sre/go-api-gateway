@@ -3,42 +3,42 @@ package gateway
 import (
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
+	"github.com/hashicorp/go-immutable-radix"
 	"net/http"
 	"net/url"
 )
 
 func ProvideRouter(c *Config) (*Router, error) {
-	var rules []*Rule
+	r := iradix.New()
+
 	for _, rule := range c.Rules {
 
-		handler, err := newHandler(c.DefaultBackend, rule)
-		if err != nil {
-			return nil, err
+		if rule.Backend == "" {
+			rule.Backend = c.DefaultBackend
 		}
 
 		if c.BasePath != "" {
 			rule.PathPrefix = c.BasePath + rule.PathPrefix
 		}
 
-		rules = append(rules, &Rule{
+		handler, err := newHandler(rule)
+		if err != nil {
+			return nil, err
+		}
+
+		r, _, _ = r.Insert([]byte(rule.PathPrefix), &Rule{
 			ConfigRule: rule,
 			Handler:    handler,
 		})
 	}
 
 	return &Router{
-		Rules: rules,
+		Rules: r,
 	}, nil
 }
 
-func newHandler(defaultBackend string, rule ConfigRule) (http.Handler, error) {
-	backend := defaultBackend
-
-	if rule.Backend != "" {
-		backend = rule.Backend
-	}
-
-	backendUrl, err := url.Parse(backend)
+func newHandler(rule ConfigRule) (http.Handler, error) {
+	backendUrl, err := url.Parse(rule.Backend)
 	if err != nil {
 		return nil, err
 	}
@@ -62,14 +62,15 @@ func newLimiter(rule ConfigRule) *limiter.Limiter {
 }
 
 type Router struct {
-	Rules []*Rule
+	Rules *iradix.Tree
 }
 
 func (r Router) Match(req *http.Request) (bool, *Rule) {
-	for _, rule := range r.Rules {
-		if rule.match(req) {
-			return true, rule
-		}
+	_, i, b := r.Rules.Root().LongestPrefix([]byte(req.URL.Path))
+	if b {
+		rule := i.(*Rule)
+		match := req.Method == rule.Method || rule.Method == ""
+		return match, rule
 	}
 	return false, nil
 }
