@@ -6,7 +6,6 @@ basePath: ""
 authentication:
   jwt:
     publicKey: |
-      -----BEGIN PUBLIC KEY-----
       MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzob0lx9XIOj56FzAZlEI
       VZTzBJUMe9bnL9FZtk3r+3eiqPU5eChktukG4UYbBFIaF+tphyFnVncvsmTVh1dE
       NTFmTK4oDmzkuvqhmVoXTUuj/YFQWqH+pX2774McsrXpG0vj4l85u/ElSDyGpFf4
@@ -14,7 +13,8 @@ authentication:
       /vcx3eE/KOkp1ZH7f9L6Stn12ITmSa+g2wMVvIsJJ3ngXHFDb/x52PCYF6bZZ1kF
       /OobaMgtmepJXCMj6zu+ZnsqM5/8FaNcAFjmMwSshhhIB/tdvwifBXcJ18B7P+tT
       TwIDAQAB
-      -----END PUBLIC KEY-----
+# The below token is signed with a key matching the above public key
+#export ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzczMTY0ODEsImlhdCI6MTYzNzMxNjE4MSwidXNlciI6eyJJRCI6MiwiQ3JlYXRlZEF0IjoiMjAyMS0xMS0xNlQwMzo0MDowNy41NzIyOTFaIiwiVXBkYXRlZEF0IjoiMjAyMS0xMS0xNlQwMzo0MDowNy41NzIyOTFaIiwiRGVsZXRlZEF0IjpudWxsLCJFbWFpbCI6ImFuZHJlYXNAc29tZXRoaW5nLm9yZyIsIkdyb3VwcyI6bnVsbCwiQWRtaW5Hcm91cHMiOm51bGwsIkluc3RhbmNlcyI6bnVsbH19.Fnftz1iOgoWErPe6XrsEsgYA3yyDhGSyNPL9woxKhM2Lpo8Uh79XzwYaBrfz7LRAy8pczFTcO_EbAjTjIZQsoFXYUxaHB7IPkObsNx4_wjMM1g9NvF1eLOvOcyzG-kAVU1O2AyB9xTiyo0Sqv9cm9EFnr2jQmrow1dyidVhYzxWDDZDEnvuhRhkouBSU3kzNoWya7TrhcR9XWKkj-O2-4nxjauPc4E3Hl_koZlHw3Ohq_V3Vt9_C_90miewy9IirfEuK_yvv0BCIn2bRzpQd1E0jNPsi6pOSZiiQ2slI4wrxTyh__tiQaJSgbiAHC0P1Myse-7Vol0xko7Sj4KGs1w
 
 rules:
   - method: GET
