@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2beta25
+kind: Config
+build:
+  artifacts:
+    - image: tons/go-api-gateway
+deploy:
+  helm:
+    releases:
+      - name: go-api-gateway-feature
+        namespace: instance-manager-feature
+        chartPath: helm/chart
+        artifactOverrides:
+          image: tons/go-api-gateway
+        imageStrategy:
+          helm: { }
+        useHelmSecrets: true
+        valuesFiles:
+          - helm/data/values/feature/values.yaml
