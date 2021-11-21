@@ -9,7 +9,7 @@ import (
 
 func TestMatch(t *testing.T) {
 	rule := &ConfigRule{
-		PathPattern: "^\\/health$",
+		PathPrefix: "/health",
 	}
 
 	configRules := []ConfigRule{*rule}
@@ -31,7 +31,7 @@ func TestMatch(t *testing.T) {
 
 func TestNoMatch(t *testing.T) {
 	rule := &ConfigRule{
-		PathPattern: "^\\/health$",
+		PathPrefix: "/health",
 	}
 
 	configRules := []ConfigRule{*rule}
@@ -40,7 +40,7 @@ func TestNoMatch(t *testing.T) {
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
 
-	u, err := url.Parse("http://backend/health-no-match")
+	u, err := url.Parse("http://backend/no-match")
 	assert.NoError(t, err)
 
 	req := &http.Request{URL: u}

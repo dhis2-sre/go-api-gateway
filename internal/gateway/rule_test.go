@@ -10,7 +10,7 @@ import (
 func TestRuleMatch(t *testing.T) {
 	expected := true
 
-	rule := createRuleWithPathPattern("POST", "^\\/health$")
+	rule := createRuleWithPathPattern("POST", "/health")
 
 	req := &http.Request{
 		Method: "POST",
@@ -25,11 +25,11 @@ func TestRuleMatch(t *testing.T) {
 func TestRuleNoMatchPath(t *testing.T) {
 	expected := false
 
-	rule := createRuleWithPathPattern("POST", "^\\/health$")
+	rule := createRuleWithPathPattern("POST", "/health")
 
 	req := &http.Request{
 		Method: "POST",
-		URL:    &url.URL{Path: "/health-no-match"},
+		URL:    &url.URL{Path: "/no-match"},
 	}
 
 	actual := rule.match(req)
@@ -40,7 +40,7 @@ func TestRuleNoMatchPath(t *testing.T) {
 func TestRuleNoMatchMethod(t *testing.T) {
 	expected := false
 
-	rule := createRuleWithPathPattern("POST", "^\\/health$")
+	rule := createRuleWithPathPattern("POST", "/health")
 
 	req := &http.Request{
 		Method: "GET",
@@ -55,7 +55,7 @@ func TestRuleNoMatchMethod(t *testing.T) {
 func TestRuleWithoutMethod(t *testing.T) {
 	expected := true
 
-	rule := createRuleWithPathPattern("", "^\\/health$")
+	rule := createRuleWithPathPattern("", "/health")
 
 	req := &http.Request{
 		Method: "WHATEVER",
@@ -67,11 +67,11 @@ func TestRuleWithoutMethod(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func createRuleWithPathPattern(method, pathPattern string) *Rule {
+func createRuleWithPathPattern(method, pathPrefix string) *Rule {
 	rule := &Rule{
 		ConfigRule: ConfigRule{
 			Method:           method,
-			PathPattern:      pathPattern,
+			PathPrefix:       pathPrefix,
 			RequestPerSecond: 0,
 			Burst:            0,
 		},
