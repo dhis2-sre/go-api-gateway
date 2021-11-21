@@ -65,7 +65,7 @@ type Router struct {
 	Rules *iradix.Tree
 }
 
-func (r Router) Match(req *http.Request) (bool, *Rule) {
+func (r Router) match(req *http.Request) (bool, *Rule) {
 	_, i, b := r.Rules.Root().LongestPrefix([]byte(req.URL.Path))
 	if b {
 		rule := i.(*Rule)

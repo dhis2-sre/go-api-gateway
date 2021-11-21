@@ -10,7 +10,7 @@ import (
 
 func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		if match, r := router.Match(req); match {
+		if match, r := router.match(req); match {
 			if r.Authentication == "jwt" {
 				valid, err := validateRequest(c.Authentication.Jwt.PublicKey, req)
 				if !valid || err != nil {

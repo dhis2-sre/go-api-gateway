@@ -22,7 +22,7 @@ func TestMatch(t *testing.T) {
 	assert.NoError(t, err)
 
 	req := &http.Request{URL: u}
-	actual, _ := router.Match(req)
+	actual, _ := router.match(req)
 
 	expected := true
 
@@ -44,7 +44,7 @@ func TestNoMatch(t *testing.T) {
 	assert.NoError(t, err)
 
 	req := &http.Request{URL: u}
-	actual, _ := router.Match(req)
+	actual, _ := router.match(req)
 
 	expected := false
 
