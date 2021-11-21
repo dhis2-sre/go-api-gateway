@@ -33,6 +33,6 @@ func printRules(router *gateway.Router) {
 		if method == "" {
 			method = "*"
 		}
-		log.Printf("%s %s -> %s - limit(%.2f, %d)", method, rule.PathPattern, rule.Backend, rule.RequestPerSecond, rule.Burst)
+		log.Printf("%s %s -> %s - limit(%.2f, %d)", method, rule.PathPrefix, rule.Backend, rule.RequestPerSecond, rule.Burst)
 	}
 }

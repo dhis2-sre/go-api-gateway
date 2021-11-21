@@ -2,7 +2,7 @@ package gateway
 
 import (
 	"net/http"
-	"regexp"
+	"strings"
 )
 
 type Rule struct {
@@ -11,9 +11,6 @@ type Rule struct {
 }
 
 func (r *Rule) match(req *http.Request) bool {
-	match, err := regexp.MatchString(r.PathPattern, req.URL.Path)
-	if err != nil {
-		return false
-	}
+	match := strings.HasPrefix(req.URL.Path, r.PathPrefix)
 	return match && (req.Method == r.Method || r.Method == "")
 }

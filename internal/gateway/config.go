@@ -25,6 +25,7 @@ func ProvideConfig() (*Config, error) {
 
 type Config struct {
 	ServerPort     string
+	BaseUrl        string
 	Authentication Authentication
 	Rules          []ConfigRule
 }
@@ -39,7 +40,7 @@ type Jwt struct {
 
 type ConfigRule struct {
 	Method           string
-	PathPattern      string
+	PathPrefix       string
 	Backend          string
 	Authentication   string
 	RequestPerSecond float64
