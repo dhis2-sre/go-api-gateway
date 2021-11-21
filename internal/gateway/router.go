@@ -11,7 +11,7 @@ func ProvideRouter(c *Config) (*Router, error) {
 	var rules []*Rule
 	for _, rule := range c.Rules {
 
-		handler, err := newHandler(rule)
+		handler, err := newHandler(c.DefaultBackend, rule)
 		if err != nil {
 			return nil, err
 		}
@@ -31,13 +31,19 @@ func ProvideRouter(c *Config) (*Router, error) {
 	}, nil
 }
 
-func newHandler(rule ConfigRule) (http.Handler, error) {
-	backend, err := url.Parse(rule.Backend)
+func newHandler(defaultBackend string, rule ConfigRule) (http.Handler, error) {
+	backend := defaultBackend
+
+	if rule.Backend != "" {
+		backend = rule.Backend
+	}
+
+	backendUrl, err := url.Parse(backend)
 	if err != nil {
 		return nil, err
 	}
 
-	transparentProxy := provideTransparentProxy(backend)
+	transparentProxy := provideTransparentProxy(backendUrl)
 	handler := http.Handler(transparentProxy)
 	if rule.RequestPerSecond != 0 {
 		lmt := newLimiter(rule)

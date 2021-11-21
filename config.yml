@@ -2,6 +2,7 @@
 
 serverPort: 8080
 basePath: ""
+defaultBackend: http://backend:8080
 
 authentication:
   jwt:
@@ -19,7 +20,6 @@ authentication:
 rules:
   - method: GET
     pathPrefix: /health
-    backend: http://backend:8080
     requestPerSecond: 2
     burst: 2
   - pathPrefix: /

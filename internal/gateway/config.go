@@ -26,6 +26,7 @@ func ProvideConfig() (*Config, error) {
 type Config struct {
 	ServerPort     string
 	BasePath       string
+	DefaultBackend string
 	Authentication Authentication
 	Rules          []ConfigRule
 }
