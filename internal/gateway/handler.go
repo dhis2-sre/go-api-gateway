@@ -18,7 +18,7 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 					return
 				}
 			}
-			// TODO: This shouldn't be necessary if we're running in cluster only accessing services
+			// TODO: This is only necessary if the service behind this gateway is using the http host header
 			fixHost(req, r.Backend)
 			r.Handler.ServeHTTP(w, req)
 			return
