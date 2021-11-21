@@ -19,7 +19,7 @@ func ProvideRouter(c *Config) (*Router, error) {
 
 		rules = append(rules, &Rule{
 			ConfigRule: rule,
-			Handler:    tollbooth.LimitFuncHandler(lmt, ProvideTransparentProxy(backend)),
+			Handler:    tollbooth.LimitFuncHandler(lmt, provideTransparentProxy(backend)),
 		})
 	}
 

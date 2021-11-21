@@ -16,7 +16,7 @@ func TestTransparentProxyHandler(t *testing.T) {
 	backendUrl, err := url.Parse(backend)
 	assert.NoError(t, err)
 
-	proxy := ProvideTransparentProxy(backendUrl)
+	proxy := provideTransparentProxy(backendUrl)
 
 	req, err := http.NewRequest("GET", "/status/200", nil)
 	assert.NoError(t, err)
