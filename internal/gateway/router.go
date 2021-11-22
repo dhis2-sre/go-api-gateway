@@ -66,11 +66,12 @@ type Router struct {
 }
 
 func (r Router) match(req *http.Request) (bool, *Rule) {
-	_, i, b := r.Rules.Root().LongestPrefix([]byte(req.URL.Path))
-	if b {
+	_, i, match := r.Rules.Root().LongestPrefix([]byte(req.URL.Path))
+	if match {
 		rule := i.(*Rule)
-		match := req.Method == rule.Method || rule.Method == ""
-		return match, rule
+		if rule.Method == "" || req.Method == rule.Method {
+			return true, rule
+		}
 	}
 	return false, nil
 }
