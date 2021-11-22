@@ -13,7 +13,7 @@ import (
 )
 
 func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
-	publicKey, err := providePublicKey(c)
+	publicKey, err := providePublicKey(c.Authentication.Jwt.PublicKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,8 +41,7 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 	}
 }
 
-func providePublicKey(c *Config) (*rsa.PublicKey, error) {
-	publicKeyString := c.Authentication.Jwt.PublicKey
+func providePublicKey(publicKeyString string) (*rsa.PublicKey, error) {
 	if publicKeyString != "" {
 		decode, _ := pem.Decode([]byte(publicKeyString))
 		publicKey, err := x509.ParsePKIXPublicKey(decode.Bytes)
