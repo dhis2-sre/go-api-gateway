@@ -2,33 +2,37 @@ image:
   pullPolicy: Always
 
 ingress:
-  hostname: apig.im.feature.test.c.dhis2.org
+  hostname: api.im.feature.test.c.dhis2.org
   certIssuer: cert-issuer-prod
 
 configuration:
   serverPort: 8080
+  basePath: /skaffold
+  defaultBackend: http://instance-manager-api-skaffold.instance-manager-feature.svc:8080
 
   authentication:
     jwt:
       publicKey: |
-        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzob0lx9XIOj56FzAZlEI
-        VZTzBJUMe9bnL9FZtk3r+3eiqPU5eChktukG4UYbBFIaF+tphyFnVncvsmTVh1dE
-        NTFmTK4oDmzkuvqhmVoXTUuj/YFQWqH+pX2774McsrXpG0vj4l85u/ElSDyGpFf4
-        BSNyCv0Zr9rg2Khit7GdEde3bsv0k4mNV4SZGGKoHnu4XpTEsPNd/Lbm7tF21Xbn
-        /vcx3eE/KOkp1ZH7f9L6Stn12ITmSa+g2wMVvIsJJ3ngXHFDb/x52PCYF6bZZ1kF
-        /OobaMgtmepJXCMj6zu+ZnsqM5/8FaNcAFjmMwSshhhIB/tdvwifBXcJ18B7P+tT
-        TwIDAQAB
-# The below token is signed with a key matching the above public key
-#export ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzczMTY0ODEsImlhdCI6MTYzNzMxNjE4MSwidXNlciI6eyJJRCI6MiwiQ3JlYXRlZEF0IjoiMjAyMS0xMS0xNlQwMzo0MDowNy41NzIyOTFaIiwiVXBkYXRlZEF0IjoiMjAyMS0xMS0xNlQwMzo0MDowNy41NzIyOTFaIiwiRGVsZXRlZEF0IjpudWxsLCJFbWFpbCI6ImFuZHJlYXNAc29tZXRoaW5nLm9yZyIsIkdyb3VwcyI6bnVsbCwiQWRtaW5Hcm91cHMiOm51bGwsIkluc3RhbmNlcyI6bnVsbH19.Fnftz1iOgoWErPe6XrsEsgYA3yyDhGSyNPL9woxKhM2Lpo8Uh79XzwYaBrfz7LRAy8pczFTcO_EbAjTjIZQsoFXYUxaHB7IPkObsNx4_wjMM1g9NvF1eLOvOcyzG-kAVU1O2AyB9xTiyo0Sqv9cm9EFnr2jQmrow1dyidVhYzxWDDZDEnvuhRhkouBSU3kzNoWya7TrhcR9XWKkj-O2-4nxjauPc4E3Hl_koZlHw3Ohq_V3Vt9_C_90miewy9IirfEuK_yvv0BCIn2bRzpQd1E0jNPsi6pOSZiiQ2slI4wrxTyh__tiQaJSgbiAHC0P1Myse-7Vol0xko7Sj4KGs1w
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0ViQyr0XGRYgpGRO1Tk2
+        pQUwPK5092T1Vsk6i9GYagq/ceWQL4Eonb1t1SGWz78lgIMp3NQ4PdBlGCsq1ajR
+        /X2rDFjKxobGfVYmtHu1B6UJ+fagVikmKuJ/kzgxLx/es0IavqOLHnCSgko1bs2j
+        SFb/wwvkZ4zI1Hy4OSdkawJlTt6UJzmQVdb9AsLTv2DOMhYHmR7PCuKRptgzgjjY
+        0UurgeZgDmD6RQo9tKv5B0SLjXkWuAiKsRJMTQ9EIl6qkRUm530Ps5P01m8OXhpN
+        5YyHTJgoBNzbetWDR0Ml5eKKZMvb3oP/lOMnmXa1CUvxOgr8ENjYdJoQY+7ZwPRT
+        1wIDAQAB
+        -----END PUBLIC KEY-----
 
   rules:
-    - method: GET
-      pathPattern: ^\/health$
-      backend: http://whoami-whoami-go.whoami.svc:8080
-      requestPerSecond: 100
-      burst: 20
-    - pathPattern: ^\/*.
-      backend: http://whoami-whoami-go.whoami.svc:8080
+# http https://api.im.feature.test.c.dhis2.org/skaffold/health
+    - pathPrefix: /health
+      method: GET
+      requestPerSecond: 50
+      burst: 5
+# http --auth andreas@something.org:yesyes post https://api.im.feature.test.c.dhis2.org/skaffold/signin
+    - pathPrefix: /signup
+      method: POST
+    - pathPrefix: /signin
+    - pathPrefix: /refresh
+    - pathPrefix: /
       authentication: jwt
-      requestPerSecond: 100
-      burst: 20
