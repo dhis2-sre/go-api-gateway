@@ -1,3 +1,11 @@
+x-service: &common-dev-test
+  build:
+    context: .
+    target: build
+  volumes:
+    - .:/src
+  working_dir: /src
+
 version: "3.6"
 services:
   prod:
@@ -11,22 +19,13 @@ services:
       - backend
 
   test:
-    build:
-      context: .
-      target: build
-    volumes:
-      - .:/src
-    working_dir: /src
+    <<: *common-dev-test
     command: /bin/sh -c 'go test -v ./...'
 
   dev:
-    build:
-      context: .
-      target: build
+    <<: *common-dev-test
     ports:
       - "8080:8080"
-    volumes:
-      - .:/src
     command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/serve"
     depends_on:
       - backend
