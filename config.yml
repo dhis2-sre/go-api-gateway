@@ -25,6 +25,6 @@ rules:
     pathPrefix: /health
     requestPerSecond: 2
     burst: 2
-  - pathPrefix: /
+  - pathPrefix: / # catch all
     backend: http://backend1:8080
     authentication: jwt
