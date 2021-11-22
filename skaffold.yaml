@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta25
 kind: Config
 build:
   artifacts:
-    - image: tons/go-api-gateway
+    - image: dhis2/go-api-gateway
 deploy:
   helm:
     releases:
@@ -10,7 +10,7 @@ deploy:
         namespace: instance-manager-feature
         chartPath: helm/chart
         artifactOverrides:
-          image: tons/go-api-gateway
+          image: dhis2/go-api-gateway
         imageStrategy:
           helm: { }
         useHelmSecrets: true
