@@ -15,6 +15,20 @@ func ProvideConfig() (*Config, error) {
 		return &Config{}, err
 	}
 
+	bindMap := map[string]string{
+		"serverport":                   "GRL_SERVER_PORT",
+		"basepath":                     "GRL_BASE_PATH",
+		"defaultbackend":               "GRL_DEFAULT_BACKEND",
+		"authentication.jwt.publickey": "GRL_PUBLIC_KEY",
+	}
+
+	for k, v := range bindMap {
+		err := viper.BindEnv(k, v)
+		if err != nil {
+			return &Config{}, err
+		}
+	}
+
 	err := viper.Unmarshal(&c)
 	if err != nil {
 		return &Config{}, err
