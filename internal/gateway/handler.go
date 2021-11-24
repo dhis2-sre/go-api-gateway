@@ -44,13 +44,16 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 func providePublicKey(publicKeyString string) (*rsa.PublicKey, error) {
 	if publicKeyString != "" {
 		decode, _ := pem.Decode([]byte(publicKeyString))
+		if decode == nil {
+			return nil, errors.New("decoding of public key failed")
+		}
 		publicKey, err := x509.ParsePKIXPublicKey(decode.Bytes)
 		if err != nil {
 			return nil, err
 		}
 		return publicKey.(*rsa.PublicKey), nil
 	}
-	return nil, errors.New("public not configured")
+	return nil, nil
 }
 
 func validateRequest(publicKey *rsa.PublicKey, req *http.Request) (bool, error) {
