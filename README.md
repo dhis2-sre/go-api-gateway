@@ -1,11 +1,33 @@
 # Introduction
-Light weight http rate limiting proxy.
+Lightweight HTTP API Gateway.
 
-The proxy will perform rate limiting based on the rules defined in the configuration [file](config.yml). If no rule match the request, it'll proxy transparently.
+The gateway will perform proxying, rate limiting and token validation based on the rules defined in the configuration [file](config.yml).
 
-# Launch in development mode
+# Architecture
+## Radix
+## Header matching
+
+# Development
+## Launch in development mode
+Any changes made to the go or yml files will result in the application being recompiled and relaunched
 ```sh
 make dev
+```
+
+## Launch in unit test development mode
+Just like `make dev` tests will be rerun if any changes are made to either go or yml files 
+```sh
+make dev-test
+```
+
+## Kubernetes
+### Helm
+
+### Helmfile
+
+### Skaffold
+```sh
+skaffold dev
 ```
 
 # HTTP Request
@@ -19,9 +41,24 @@ http :8080
 seq 10 | xargs -P 4 -I '{}' http post :8080/health
 ```
 
+# Configuration
+## Minimal
+
+## Rate limiting
+
+## Request Matching
+### Path Prefix
+### HTTP Method
+### HTTP Headers
+
+## Environment variables
+
+
+
 # Credits
 * https://github.com/didip/tollbooth
 
 # TODO
 * Comment exported types and functions
 * Write tests
+* CICD
