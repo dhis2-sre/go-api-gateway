@@ -30,7 +30,7 @@ services:
     depends_on:
       - backend
 
-  backend:
+  backend0:
     image: tons/whoami-go:0.4.0
 
   backend1:

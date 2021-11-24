@@ -11,14 +11,14 @@ import (
 func TestTransparentProxyHandler(t *testing.T) {
 	expected := http.StatusOK
 
-	backend := "https://httpbin.org"
+	backend := "http://backend0:8080"
 
 	backendUrl, err := url.Parse(backend)
 	assert.NoError(t, err)
 
 	proxy := provideTransparentProxy(backendUrl)
 
-	req, err := http.NewRequest("GET", "/status/200", nil)
+	req, err := http.NewRequest("GET", "/health", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
