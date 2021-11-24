@@ -17,6 +17,7 @@ services:
       - ./config.yml:/app/config.yml
     depends_on:
       - backend0
+      - backend1
 
   test:
     <<: *common-dev-test
