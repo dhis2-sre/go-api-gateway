@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 func ProvideConfig() (*Config, error) {
@@ -16,10 +17,10 @@ func ProvideConfig() (*Config, error) {
 	}
 
 	bindMap := map[string]string{
-		"serverport":                   "GRL_SERVER_PORT",
-		"basepath":                     "GRL_BASE_PATH",
-		"defaultbackend":               "GRL_DEFAULT_BACKEND",
-		"authentication.jwt.publickey": "GRL_PUBLIC_KEY",
+		"serverport":                   "APIG_SERVER_PORT",
+		"basepath":                     "APIG_BASE_PATH",
+		"defaultbackend":               "APIG_DEFAULT_BACKEND",
+		"authentication.jwt.publickey": "APIG_PUBLIC_KEY",
 	}
 
 	for k, v := range bindMap {
@@ -60,4 +61,5 @@ type ConfigRule struct {
 	Authentication   string
 	RequestPerSecond float64
 	Burst            int
+	Headers          http.Header
 }

@@ -21,7 +21,7 @@ func TestMatch(t *testing.T) {
 	u, err := url.Parse("http://backend/health")
 	assert.NoError(t, err)
 
-	req := &http.Request{URL: u}
+	req := &http.Request{URL: u, Method: "GET"}
 	actual, _ := router.match(req)
 
 	expected := true
@@ -43,7 +43,7 @@ func TestNoMatch(t *testing.T) {
 	u, err := url.Parse("http://backend/no-match")
 	assert.NoError(t, err)
 
-	req := &http.Request{URL: u}
+	req := &http.Request{URL: u, Method: "GET"}
 	actual, _ := router.match(req)
 
 	expected := false

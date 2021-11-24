@@ -19,8 +19,8 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, req *http.Request) {
-		if match, r := router.match(req); match {
-			if r.Authentication == "jwt" {
+		if match, rule := router.match(req); match {
+			if rule.Authentication == "jwt" {
 				valid, err := validateRequest(publicKey, req)
 				if err != nil {
 					log.Println(err)
@@ -33,11 +33,11 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 				}
 			}
 			// TODO: This is only necessary if the service behind this gateway is using the http host header... Maybe this should be done differently?
-			fixHost(req, r.Backend)
-			r.Handler.ServeHTTP(w, req)
+			fixHost(req, rule.Backend)
+			rule.Handler.ServeHTTP(w, req)
 			return
 		}
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusMisdirectedRequest)
 	}
 }
 

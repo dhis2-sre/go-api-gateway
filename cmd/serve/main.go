@@ -27,19 +27,36 @@ func main() {
 }
 
 func printRules(router *gateway.Router) {
-	log.Printf("Rules (%d)", router.Rules.Len())
-	router.Rules.Root().Walk(func(k []byte, i interface{}) bool {
-		rule := i.(*gateway.Rule)
-		method := rule.Method
-		if method == "" {
-			method = "*"
-		}
+	type SetValue struct{}
+	ruleSet := map[*gateway.Rule]SetValue{}
 
-		if rule.RequestPerSecond != 0 {
-			log.Printf("%s %s -> %s - limit(%.2f, %d)", method, rule.PathPrefix, rule.Backend, rule.RequestPerSecond, rule.Burst)
-		} else {
-			log.Printf("%s %s -> %s", method, rule.PathPrefix, rule.Backend)
+	router.Rules.Root().Walk(func(k []byte, i interface{}) bool {
+		rules := i.([]*gateway.Rule)
+		for _, rule := range rules {
+			ruleSet[rule] = SetValue{}
 		}
 		return false
 	})
+
+	if router.CatchAllRule != nil {
+		ruleSet[router.CatchAllRule] = SetValue{}
+	}
+
+	log.Printf("Rules %d (tree: %d)", len(ruleSet), router.Rules.Len())
+	for rule, _ := range ruleSet {
+		printRule(rule)
+	}
+}
+
+func printRule(rule *gateway.Rule) {
+	method := rule.Method
+	if method == "" {
+		method = "*"
+	}
+
+	if rule.RequestPerSecond != 0 {
+		log.Printf("%s %s -> %s - limit(%.2f, %d)", method, rule.PathPrefix, rule.Backend, rule.RequestPerSecond, rule.Burst)
+	} else {
+		log.Printf("%s %s -> %s", method, rule.PathPrefix, rule.Backend)
+	}
 }

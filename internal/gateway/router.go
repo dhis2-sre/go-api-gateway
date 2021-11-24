@@ -9,32 +9,70 @@ import (
 )
 
 func ProvideRouter(c *Config) (*Router, error) {
-	r := iradix.New()
+	rules := iradix.New()
 
-	for _, rule := range c.Rules {
+	ruleMap, catchAllRule, err := mapRules(c)
+	if err != nil {
+		return nil, err
+	}
 
-		if rule.Backend == "" {
-			rule.Backend = c.DefaultBackend
-		}
-
-		if c.BasePath != "" {
-			rule.PathPrefix = c.BasePath + rule.PathPrefix
-		}
-
-		handler, err := newHandler(rule)
-		if err != nil {
-			return nil, err
-		}
-
-		r, _, _ = r.Insert([]byte(rule.PathPrefix), &Rule{
-			ConfigRule: rule,
-			Handler:    handler,
-		})
+	for path, r := range ruleMap {
+		rules, _, _ = rules.Insert([]byte(path), r)
 	}
 
 	return &Router{
-		Rules: r,
+		Rules:        rules,
+		CatchAllRule: catchAllRule,
 	}, nil
+}
+
+func mapRules(c *Config) (map[string][]*Rule, *Rule, error) {
+	httpMethods := []string{"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "CONNECT", "OPTIONS", "TRACE"}
+
+	ruleMap := map[string][]*Rule{}
+	var catchAll *Rule = nil
+
+	for _, configRule := range c.Rules {
+
+		// Use default backend if rule doesn't specify one
+		if configRule.Backend == "" {
+			configRule.Backend = c.DefaultBackend
+		}
+
+		// Prefix with basePath if it's defined
+		if c.BasePath != "" {
+			configRule.PathPrefix = c.BasePath + configRule.PathPrefix
+		}
+
+		// Create handler
+		handler, err := newHandler(configRule)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		rule := &Rule{
+			ConfigRule: configRule,
+			Handler:    handler,
+		}
+
+		// Detect catch all rule
+		if configRule.PathPrefix == c.BasePath+"/" {
+			catchAll = rule
+			continue
+		}
+
+		// Only method and path prefix is indexed in the radix tree, so we might have multiple rules with overlapping which only differs based on headers
+		if configRule.Method != "" {
+			index := configRule.Method + configRule.PathPrefix
+			ruleMap[index] = append(ruleMap[index], rule)
+		} else {
+			for _, method := range httpMethods {
+				index := method + configRule.PathPrefix
+				ruleMap[index] = append(ruleMap[index], rule)
+			}
+		}
+	}
+	return ruleMap, catchAll, nil
 }
 
 func newHandler(rule ConfigRule) (http.Handler, error) {
@@ -62,16 +100,61 @@ func newLimiter(rule ConfigRule) *limiter.Limiter {
 }
 
 type Router struct {
-	Rules *iradix.Tree
+	Rules        *iradix.Tree
+	CatchAllRule *Rule
 }
 
 func (r Router) match(req *http.Request) (bool, *Rule) {
-	_, i, match := r.Rules.Root().LongestPrefix([]byte(req.URL.Path))
+	match, rule := r.matchRule(req)
 	if match {
-		rule := i.(*Rule)
-		if rule.Method == "" || req.Method == rule.Method {
-			return true, rule
+		return true, rule
+	}
+
+	if r.CatchAllRule != nil && r.matchMethod(r.CatchAllRule, req) && r.matchHeaders(r.CatchAllRule, req) {
+		return true, r.CatchAllRule
+	}
+
+	return false, nil
+}
+
+func (r Router) matchRule(req *http.Request) (bool, *Rule) {
+	_, i, match := r.Rules.Root().LongestPrefix([]byte(req.Method + req.URL.Path))
+	if match {
+		rules := i.([]*Rule)
+		for _, rule := range rules {
+			if r.matchHeaders(rule, req) {
+				return true, rule
+			}
 		}
 	}
 	return false, nil
+}
+
+func (r Router) matchMethod(rule *Rule, req *http.Request) bool {
+	return rule.Method == "" || req.Method == rule.Method
+}
+
+func (r Router) matchHeaders(rule *Rule, req *http.Request) bool {
+	for ruleHeader := range rule.Headers {
+		requestHeaderValues, exists := req.Header[ruleHeader]
+		if !exists {
+			return false
+		}
+
+		for _, ruleHeaderValue := range rule.Headers[ruleHeader] {
+			if !stringInSlice(ruleHeaderValue, requestHeaderValues) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
