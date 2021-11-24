@@ -22,6 +22,10 @@ services:
     <<: *common-dev-test
     command: /bin/sh -c 'go test -v ./...'
 
+  dev-test:
+    <<: *common-dev-test
+    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go test -v ./..."
+
   dev:
     <<: *common-dev-test
     ports:

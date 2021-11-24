@@ -15,6 +15,11 @@ test: clean
 	docker compose run --no-deps test
 	$(clean-cmd)
 
+dev-test: clean
+	docker compose up -d backend0 backend1
+	docker compose run --no-deps dev-test
+	$(clean-cmd)
+
 clean:
 	$(clean-cmd)
 	go clean
