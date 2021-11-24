@@ -65,14 +65,17 @@ func validateRequest(publicKey *rsa.PublicKey, req *http.Request) (bool, error) 
 }
 
 func fixHost(req *http.Request, ruleBackend string) {
-	if !strings.HasSuffix(req.Host, ruleBackend) {
-		var backend string
-		if strings.HasPrefix(ruleBackend, "https://") {
-			backend = strings.TrimPrefix(ruleBackend, "https://")
-		}
-		if strings.HasPrefix(ruleBackend, "http://") {
-			backend = strings.TrimPrefix(ruleBackend, "http://")
-		}
-		req.Host = backend
+	if strings.HasSuffix(req.Host, ruleBackend) {
+		return
+	}
+
+	if strings.HasPrefix(ruleBackend, "https://") {
+		req.Host = strings.TrimPrefix(ruleBackend, "https://")
+		return
+	}
+
+	if strings.HasPrefix(ruleBackend, "http://") {
+		req.Host = strings.TrimPrefix(ruleBackend, "http://")
+		return
 	}
 }
