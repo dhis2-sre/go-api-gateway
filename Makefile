@@ -8,7 +8,7 @@ docker-image:
 	IMAGE_TAG=$(tag) docker compose build prod && IMAGE_TAG=$(tag) docker compose push prod
 
 dev:
-	docker compose up --build dev backend backend1
+	docker compose up --build dev backend0 backend1
 
 test: clean
 	docker compose up -d backend0 backend1
