@@ -5,7 +5,10 @@ binary:
 	go build -o go-api-gateway -ldflags "-s -w" ./cmd/serve
 
 docker-image:
-	IMAGE_TAG=$(tag) docker compose build prod && IMAGE_TAG=$(tag) docker compose push prod
+	IMAGE_TAG=$(tag) docker compose build prod
+
+push-docker-image:
+	IMAGE_TAG=$(tag) docker compose push prod
 
 dev:
 	docker compose up --build dev backend0 backend1
