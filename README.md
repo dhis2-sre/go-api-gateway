@@ -5,7 +5,7 @@ Lightweight HTTP API Gateway.
 The gateway will perform proxying, rate limiting and token validation based on the rules defined in the
 configuration [file](config.yml).
 
-# Dependencies
+# Dependencies (for development)
 
 * Make
 * Docker
@@ -130,6 +130,12 @@ Or prefixed with the string "Bearer"
 
 > Authorization: Bearer token
 
+An example of an authorizing request can be seen below
+```sh
+export ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3OTExNTQ0MTUsImlhdCI6MTYzNzU1NDQxNX0.PtQp6_k5bQ9KE9uk520i4emVnUmxFD8DxyeZsfzgT6CY2oMyXEm7zlIA-4_xz2Q7CrSeqnWxpy0coK9MN0EPE2vhFomTrP6D3l7_lX6Dyn1gH6zWpjC_dRqOSRv3AqS3buZiC-vNwCatLhu6WE74cykBAE2veIr8Gp_ebiITXJKiHBNaTlPk2WEfcJ1NL3g7nafy6l-V4h2-Vj3tapJQiLfpgReIXYIswFYH7En7qy94fL0eOUbZzQI9fOuiXvAN-owR3GYcbwz9Hll23VACWsekMJdDBEgUSdek9JOmRHGxko6FE79-_ClYvF1dGUgZB2mDwY_xF2TOG2q3XDi9Aw
+http get :8080/ "Authorization: Bearer $ACCESS_TOKEN"
+```
+
 ## Environment Variables
 
 The following environment variables are support and will take precedence over values defined in the configuration file.
@@ -253,4 +259,5 @@ make publish-helm
 
 * Comment exported types and functions
 * Write more tests
+* Refactor the router to be more readable
 * CICD
