@@ -75,6 +75,17 @@ http :8080
 seq 10 | xargs -P 4 -I '{}' http post :8080/health
 ```
 
+# HTTP Response Status Codes
+
+The following status codes could be returned by the gateway but could also originate from the server which the request
+was proxied to
+
+| Code | Meaning | Reason |
+| --- | --- | --- |
+| 403 | Forbidden | Invalid token |
+| 421 | Misdirected Request | No matching rule found |
+| 429 | Too Many Requests | Rate limits exceeded |
+
 # Configuration
 
 ## Minimal
@@ -131,6 +142,7 @@ Or prefixed with the string "Bearer"
 > Authorization: Bearer token
 
 An example of an authorizing request can be seen below
+
 ```sh
 export ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3OTExNTQ0MTUsImlhdCI6MTYzNzU1NDQxNX0.PtQp6_k5bQ9KE9uk520i4emVnUmxFD8DxyeZsfzgT6CY2oMyXEm7zlIA-4_xz2Q7CrSeqnWxpy0coK9MN0EPE2vhFomTrP6D3l7_lX6Dyn1gH6zWpjC_dRqOSRv3AqS3buZiC-vNwCatLhu6WE74cykBAE2veIr8Gp_ebiITXJKiHBNaTlPk2WEfcJ1NL3g7nafy6l-V4h2-Vj3tapJQiLfpgReIXYIswFYH7En7qy94fL0eOUbZzQI9fOuiXvAN-owR3GYcbwz9Hll23VACWsekMJdDBEgUSdek9JOmRHGxko6FE79-_ClYvF1dGUgZB2mDwY_xF2TOG2q3XDi9Aw
 http get :8080/ "Authorization: Bearer $ACCESS_TOKEN"
@@ -182,8 +194,7 @@ The below rule serves as a catch-all rule
 ```
 
 A catch-all rule supports the normal HTTP method and http header matching properties. If any of such are defined it'll *
-only*
-catch requests matching those criteria.
+only* catch requests matching those criteria.
 
 > **_NOTE:_** Currently, only one catch-all rule will be evaluated. If multiple rules are defined the last one will take precedence.
 
