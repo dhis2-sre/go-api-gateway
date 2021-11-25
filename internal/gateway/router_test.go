@@ -3,7 +3,6 @@ package gateway
 import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
-	"net/url"
 	"testing"
 )
 
@@ -18,10 +17,9 @@ func TestMatch(t *testing.T) {
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
 
-	u, err := url.Parse("http://backend/health")
+	req, err := http.NewRequest("GET", "http://backend/health", nil)
 	assert.NoError(t, err)
 
-	req := &http.Request{URL: u, Method: "GET"}
 	actual, _ := router.match(req)
 
 	expected := true
@@ -40,10 +38,9 @@ func TestNoMatch(t *testing.T) {
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
 
-	u, err := url.Parse("http://backend/no-match")
+	req, err := http.NewRequest("GET", "http://backend/no-match", nil)
 	assert.NoError(t, err)
 
-	req := &http.Request{URL: u, Method: "GET"}
 	actual, _ := router.match(req)
 
 	expected := false
@@ -64,10 +61,9 @@ func TestMatchWithBasePath(t *testing.T) {
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
 
-	u, err := url.Parse("http://backend/base-path/health")
+	req, err := http.NewRequest("GET", "http://backend/base-path/health", nil)
 	assert.NoError(t, err)
 
-	req := &http.Request{URL: u, Method: "GET"}
 	actual, _ := router.match(req)
 
 	expected := true
