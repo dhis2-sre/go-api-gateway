@@ -50,3 +50,27 @@ func TestNoMatch(t *testing.T) {
 
 	assert.Equal(t, expected, actual)
 }
+
+func TestMatchWithBasePath(t *testing.T) {
+	basePath := "/base-path"
+
+	rule := &ConfigRule{
+		PathPrefix: "/health",
+	}
+
+	configRules := []ConfigRule{*rule}
+	c := &Config{BasePath: basePath, Rules: configRules}
+
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
+
+	u, err := url.Parse("http://backend/base-path/health")
+	assert.NoError(t, err)
+
+	req := &http.Request{URL: u, Method: "GET"}
+	actual, _ := router.match(req)
+
+	expected := true
+
+	assert.Equal(t, expected, actual)
+}
