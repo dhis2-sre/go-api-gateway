@@ -36,4 +36,4 @@ publish-helm:
         -F "chart=@api-gateway-$(version).tgz" \
         https://helm-charts.fitfit.dk/api/charts
 
-.PHONY: binary docker-image push-docker-image dev test dev-test helm-package publish-helm
+.PHONY: binary docker-image push-docker-image dev test dev-test helm-chart publish-helm
