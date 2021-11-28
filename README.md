@@ -105,6 +105,17 @@ rules:
     burst: 2
 ```
 
+## Base path
+It's possible to define a base path property. The value of such will be prepended to all path prefixes.
+
+```yml
+basePath: /test
+rules:
+  - pathPrefix: /health
+```
+
+The above configuration will match the incoming request against the path prefix `/test/health`.
+
 ## Rate Limiting
 
 Rate limiting is done per rule basis by defining the number of requests which are allowed per second and how much burst
