@@ -23,12 +23,12 @@ authentication:
 rules:
   - pathPrefix: /health
     method: GET
-    requestPerSecond: 2
-    burst: 2
     headers:
       User-Agent:
         - HTTPie/2.6.0
 #        - Wget/1.21.2
+    requestPerSecond: 2
+    burst: 2
   - pathPrefix: / # catch all
     backend: http://backend1:8080
     authentication: jwt
