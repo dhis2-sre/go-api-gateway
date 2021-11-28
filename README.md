@@ -173,8 +173,6 @@ A request will first be matched by HTTP method and path prefix. If a match is fo
 ```yml
   - pathPrefix: /health
     method: GET
-    requestPerSecond: 2
-    burst: 2
     headers:
       User-Agent:
         - HTTPie/2.6.0
