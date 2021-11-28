@@ -108,7 +108,14 @@ rules:
 ## Rate Limiting
 
 Rate limiting is done per rule basis by defining the number of requests which are allowed per second and how much burst
-is allowed.
+to allowed.
+
+```yml
+rules:
+  - pathPrefix: /
+    requestPerSecond: 2
+    burst: 2
+```
 
 This is implemented using [tollbooth](https://github.com/didip/tollbooth).
 
