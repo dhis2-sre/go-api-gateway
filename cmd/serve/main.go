@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/dhis2-sre/go-rate-limiter/internal/gateway"
+	"github.com/dhis2-sre/go-rate-limiter/internal/health"
 	"log"
 	"net/http"
 )
@@ -17,13 +18,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	handler := gateway.ProvideHandler(config, router)
+	gatewayHandler := gateway.ProvideHandler(config, router)
+	http.HandleFunc("/", gatewayHandler)
+
+	http.HandleFunc("/gateway/health", health.Handler)
 
 	printRules(router)
 
 	port := config.ServerPort
 	log.Println("Listening on port: " + port)
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func printRules(router *gateway.Router) {
