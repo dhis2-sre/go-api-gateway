@@ -1,4 +1,4 @@
-module github.com/dhis2-sre/go-rate-limiter
+module github.com/dhis2-sre/go-api-gateway
 
 go 1.16
 

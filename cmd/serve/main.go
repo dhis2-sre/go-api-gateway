@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/dhis2-sre/go-rate-limiter/internal/gateway"
-	"github.com/dhis2-sre/go-rate-limiter/internal/health"
+	"github.com/dhis2-sre/go-api-gateway/internal/gateway"
+	"github.com/dhis2-sre/go-api-gateway/internal/health"
 	"log"
 	"net/http"
 )
