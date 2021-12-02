@@ -47,7 +47,7 @@ func printRules(router *gateway.Router) {
 	}
 
 	log.Printf("Rules %d (tree: %d)", len(ruleSet), router.Rules.Len())
-	for rule, _ := range ruleSet {
+	for rule := range ruleSet {
 		printRule(rule)
 	}
 }
