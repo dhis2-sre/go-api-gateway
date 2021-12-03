@@ -63,12 +63,12 @@ func mapRules(c *Config) (map[string][]*Rule, *Rule, error) {
 
 		// Only method and path prefix is indexed in the radix tree, so we might have multiple rules with overlapping which only differs based on headers
 		if configRule.Method != "" {
-			index := configRule.Method + configRule.PathPrefix
-			ruleMap[index] = append(ruleMap[index], rule)
+			key := configRule.Method + configRule.PathPrefix
+			ruleMap[key] = append(ruleMap[key], rule)
 		} else {
 			for _, method := range httpMethods {
-				index := method + configRule.PathPrefix
-				ruleMap[index] = append(ruleMap[index], rule)
+				key := method + configRule.PathPrefix
+				ruleMap[key] = append(ruleMap[key], rule)
 			}
 		}
 	}
@@ -118,7 +118,8 @@ func (r Router) match(req *http.Request) (bool, *Rule) {
 }
 
 func (r Router) matchRule(req *http.Request) (bool, *Rule) {
-	_, i, match := r.Rules.Root().LongestPrefix([]byte(req.Method + req.URL.Path))
+	key := req.Method + req.URL.Path
+	_, i, match := r.Rules.Root().LongestPrefix([]byte(key))
 	if match {
 		rules := i.([]*Rule)
 		for _, rule := range rules {
