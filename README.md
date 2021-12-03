@@ -106,6 +106,7 @@ rules:
 ```
 
 ## Base path
+
 It's possible to define a base path property. The value of such will be prepended to all path prefixes.
 
 ```yml
@@ -115,6 +116,16 @@ rules:
 ```
 
 The above configuration will match the incoming request against the path prefix `/test/health`.
+
+## Blocking
+
+Access to certain paths can be blocked by using the `block` property of a rule
+
+```yml
+rules:
+  - pathPrefix: /prefix
+    block: true
+```
 
 ## Rate Limiting
 

@@ -45,6 +45,56 @@ func TestHandler(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
+func TestHandlerBlock(t *testing.T) {
+	expected := http.StatusForbidden
+
+	rule := ConfigRule{
+		PathPrefix: "/health",
+		Block:      true,
+	}
+
+	configRules := []ConfigRule{rule}
+	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+
+	router, err := ProvideRouter(c)
+
+	handler := ProvideHandler(c, router)
+
+	req, err := http.NewRequest("GET", "/health", nil)
+	assert.NoError(t, err)
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, req)
+
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
+}
+
+func TestHandlerBlockFalse(t *testing.T) {
+	expected := http.StatusOK
+
+	rule := ConfigRule{
+		PathPrefix: "/health",
+		Block:      false,
+	}
+
+	configRules := []ConfigRule{rule}
+	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+
+	router, err := ProvideRouter(c)
+
+	handler := ProvideHandler(c, router)
+
+	req, err := http.NewRequest("GET", "/health", nil)
+	assert.NoError(t, err)
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, req)
+
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
+}
+
 func TestHandlerRateLimited(t *testing.T) {
 	rule := ConfigRule{
 		PathPrefix:       "/health",

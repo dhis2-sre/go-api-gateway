@@ -20,6 +20,11 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, req *http.Request) {
 		if match, rule := router.match(req); match {
+			if rule.Block {
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+
 			if rule.Authentication == "jwt" {
 				valid, err := validateRequest(publicKey, req)
 				if err != nil {

@@ -57,6 +57,7 @@ type Jwt struct {
 type ConfigRule struct {
 	Method           string
 	PathPrefix       string
+	Block            bool
 	Backend          string
 	Authentication   string
 	RequestPerSecond float64
