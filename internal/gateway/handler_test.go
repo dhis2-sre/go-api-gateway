@@ -32,6 +32,7 @@ func TestHandler(t *testing.T) {
 	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
 
 	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
 
 	handler := ProvideHandler(c, router)
 
