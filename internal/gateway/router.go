@@ -15,6 +15,7 @@ func ProvideRouter(c *Config) (*Router, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	ruleMap, catchAllRule, err := mapRules(c, backendMap)
 	if err != nil {
 		return nil, err
