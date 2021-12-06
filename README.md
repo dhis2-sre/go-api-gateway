@@ -44,6 +44,10 @@ make dev-test
 
 ## Kubernetes
 
+### Health check
+
+/gateway/health
+
 ### Helm
 
 ...
