@@ -7,7 +7,14 @@ import (
 	"testing"
 )
 
-const defaultBackend = "http://backend0:8080"
+func getBackends() []Backend {
+	return []Backend{
+		{Name: "backend0", Url: "http://backend0:8080"},
+		{Name: "backend1", Url: "http://backend1:8080"},
+	}
+}
+
+const defaultBackend = "backend0"
 
 const publicKey = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtYrBsSkVGXZKQL13lbmd
@@ -29,7 +36,7 @@ func TestHandler(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
@@ -55,7 +62,7 @@ func TestHandlerBlock(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 
@@ -80,7 +87,7 @@ func TestHandlerBlockFalse(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 
@@ -104,7 +111,7 @@ func TestHandlerRateLimited(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
@@ -145,7 +152,7 @@ func TestHandlerUserAgentHeader(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 
@@ -173,7 +180,7 @@ func TestHandlerUserAgentHeaderNoMatch(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 
@@ -199,7 +206,7 @@ func TestHandlerNoMatch(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{rule}
-	c := &Config{Rules: configRules, DefaultBackend: defaultBackend}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 
@@ -226,6 +233,7 @@ func TestHandlerJwtAuthentication(t *testing.T) {
 	configRules := []ConfigRule{rule}
 
 	c := &Config{
+		Backends:       getBackends(),
 		DefaultBackend: defaultBackend,
 		Authentication: Authentication{Jwt: Jwt{publicKey}},
 		Rules:          configRules,
@@ -258,6 +266,7 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 	configRules := []ConfigRule{rule}
 
 	c := &Config{
+		Backends:       getBackends(),
 		DefaultBackend: defaultBackend,
 		Authentication: Authentication{Jwt: Jwt{publicKey}},
 		Rules:          configRules,

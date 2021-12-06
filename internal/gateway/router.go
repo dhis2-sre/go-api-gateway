@@ -11,7 +11,11 @@ import (
 func ProvideRouter(c *Config) (*Router, error) {
 	rules := iradix.New()
 
-	ruleMap, catchAllRule, err := mapRules(c)
+	backendMap, err := mapBackends(c)
+	if err != nil {
+		return nil, err
+	}
+	ruleMap, catchAllRule, err := mapRules(c, backendMap)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +30,19 @@ func ProvideRouter(c *Config) (*Router, error) {
 	}, nil
 }
 
-func mapRules(c *Config) (map[string][]*Rule, *Rule, error) {
+func mapBackends(c *Config) (map[string]*url.URL, error) {
+	backendMap := map[string]*url.URL{}
+	for _, backend := range c.Backends {
+		backendUrl, err := url.Parse(backend.Url)
+		if err != nil {
+			return nil, err
+		}
+		backendMap[backend.Name] = backendUrl
+	}
+	return backendMap, nil
+}
+
+func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *Rule, error) {
 	httpMethods := []string{"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "CONNECT", "OPTIONS", "TRACE"}
 
 	ruleMap := map[string][]*Rule{}
@@ -45,7 +61,8 @@ func mapRules(c *Config) (map[string][]*Rule, *Rule, error) {
 		}
 
 		// Create handler
-		handler, err := newHandler(configRule)
+		backendUrl := backendMap[configRule.Backend]
+		handler, err := newHandler(configRule, backendUrl)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -75,12 +92,7 @@ func mapRules(c *Config) (map[string][]*Rule, *Rule, error) {
 	return ruleMap, catchAll, nil
 }
 
-func newHandler(rule ConfigRule) (http.Handler, error) {
-	backendUrl, err := url.Parse(rule.Backend)
-	if err != nil {
-		return nil, err
-	}
-
+func newHandler(rule ConfigRule, backendUrl *url.URL) (http.Handler, error) {
 	transparentProxy := provideTransparentProxy(backendUrl)
 	handler := http.Handler(transparentProxy)
 	if rule.RequestPerSecond != 0 {

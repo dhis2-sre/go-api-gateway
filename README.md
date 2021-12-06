@@ -94,12 +94,17 @@ was proxied to
 
 ## Minimal
 
-The following configuration will proxy all get requests to /health to the `defaultBackend` and all other requests will
-be rate limited before being proxied to the same backend.
+The following configuration will proxy all get requests to /health, to the `defaultBackend`.
+
+All other requests will be rate limited before being proxied to the same backend.
 
 ```yml
 serverPort: 8080
-defaultBackend: http://backend:8080
+defaultBackend: backend
+
+backends:
+  - name: backend
+    url: http://backend:8080
 
 rules:
   - pathPrefix: /health
@@ -202,7 +207,6 @@ A request will first be matched by HTTP method and path prefix. If a match is fo
     headers:
       User-Agent:
         - HTTPie/2.6.0
-    backend: http://backend:8080
 ```
 
 ### Path Prefix
@@ -221,7 +225,6 @@ The below rule serves as a catch-all rule
 
 ```yml
 - pathPrefix: / # catch all
-  backend: http://backend:8080
 ```
 
 A catch-all rule supports the normal HTTP method and http header matching properties. If any of such are defined it'll *

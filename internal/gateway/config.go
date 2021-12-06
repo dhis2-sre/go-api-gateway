@@ -43,6 +43,7 @@ type Config struct {
 	BasePath       string
 	DefaultBackend string
 	Authentication Authentication
+	Backends       []Backend
 	Rules          []ConfigRule
 }
 
@@ -52,6 +53,11 @@ type Authentication struct {
 
 type Jwt struct {
 	PublicKey string
+}
+
+type Backend struct {
+	Name string
+	Url  string
 }
 
 type ConfigRule struct {
