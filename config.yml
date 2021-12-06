@@ -5,10 +5,6 @@ basePath: ""
 defaultBackend: backend0
 
 authentication:
-  jwks:
-#    host: http://blabla/jwks
-    host: https://www.googleapis.com/oauth2/v3/certs
-    index: 0
   jwt:
     publicKey: |
       -----BEGIN PUBLIC KEY-----
