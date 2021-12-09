@@ -19,6 +19,7 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, req *http.Request) {
+		log.Printf("%s %s%s", req.Method, req.URL.Host, req.URL.Path)
 		if match, rule := router.match(req); match {
 			if rule.Block {
 				w.WriteHeader(http.StatusForbidden)
