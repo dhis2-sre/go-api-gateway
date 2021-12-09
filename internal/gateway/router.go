@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"errors"
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/hashicorp/go-immutable-radix"
@@ -63,6 +64,9 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 
 		// Create handler
 		backendUrl := backendMap[configRule.Backend]
+		if backendUrl == nil {
+			return nil, nil, errors.New("Backend map contains not entry for: " + configRule.Backend)
+		}
 		handler, err := newHandler(configRule, backendUrl)
 		if err != nil {
 			return nil, nil, err
