@@ -9,10 +9,11 @@ import (
 func TestMatch(t *testing.T) {
 	rule := &ConfigRule{
 		PathPrefix: "/health",
+		Backend:    "backend0",
 	}
 
 	configRules := []ConfigRule{*rule}
-	c := &Config{Rules: configRules}
+	c := &Config{Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
@@ -27,13 +28,41 @@ func TestMatch(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestNoMatch(t *testing.T) {
+func TestRuleDefinesBackendOrDefaultBackend(t *testing.T) {
 	rule := &ConfigRule{
 		PathPrefix: "/health",
 	}
 
 	configRules := []ConfigRule{*rule}
 	c := &Config{Rules: configRules}
+
+	_, err := ProvideRouter(c)
+	assert.NotNil(t, err)
+	assert.Equal(t, "either a rule needs to define a backend or a default backend needs to be defined", err.Error())
+}
+
+func TestMatchUnmappedBackend(t *testing.T) {
+	rule := &ConfigRule{
+		PathPrefix: "/health",
+		Backend:    "some-undefined-backend",
+	}
+
+	configRules := []ConfigRule{*rule}
+	c := &Config{Rules: configRules}
+
+	_, err := ProvideRouter(c)
+	assert.NotNil(t, err)
+	assert.Equal(t, "backend map contains not entry for: some-undefined-backend", err.Error())
+}
+
+func TestNoMatch(t *testing.T) {
+	rule := &ConfigRule{
+		PathPrefix: "/health",
+		Backend:    "backend0",
+	}
+
+	configRules := []ConfigRule{*rule}
+	c := &Config{Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
@@ -53,10 +82,11 @@ func TestMatchWithBasePath(t *testing.T) {
 
 	rule := &ConfigRule{
 		PathPrefix: "/health",
+		Backend:    "backend0",
 	}
 
 	configRules := []ConfigRule{*rule}
-	c := &Config{BasePath: basePath, Rules: configRules}
+	c := &Config{BasePath: basePath, Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)
@@ -95,7 +125,7 @@ func TestMatchSamePathAndMethodButDifferentHeaders(t *testing.T) {
 	}
 
 	configRules := []ConfigRule{*rule0, *rule1}
-	c := &Config{Rules: configRules}
+	c := &Config{Backends: getBackends(), Rules: configRules}
 
 	router, err := ProvideRouter(c)
 	assert.NoError(t, err)

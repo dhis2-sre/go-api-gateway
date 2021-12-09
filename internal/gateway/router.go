@@ -57,6 +57,10 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 			configRule.Backend = c.DefaultBackend
 		}
 
+		if configRule.Backend == "" {
+			return nil, nil, errors.New("either a rule needs to define a backend or a default backend needs to be defined")
+		}
+
 		// Prefix with basePath if it's defined
 		if c.BasePath != "" {
 			configRule.PathPrefix = c.BasePath + configRule.PathPrefix
@@ -65,7 +69,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 		// Create handler
 		backendUrl := backendMap[configRule.Backend]
 		if backendUrl == nil {
-			return nil, nil, errors.New("Backend map contains not entry for: " + configRule.Backend)
+			return nil, nil, errors.New("backend map contains not entry for: " + configRule.Backend)
 		}
 		handler, err := newHandler(configRule, backendUrl)
 		if err != nil {
