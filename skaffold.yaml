@@ -8,6 +8,7 @@ deploy:
     releases:
       - name: go-api-gateway-feature
         namespace: instance-manager-feature
+        createNamespace: true
         chartPath: helm/chart
         artifactOverrides:
           image: dhis2/go-api-gateway
