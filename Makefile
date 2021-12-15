@@ -14,6 +14,9 @@ push-docker-image:
 dev:
 	docker compose up --build dev backend0 backend1
 
+cluster-dev:
+	skaffold dev
+
 test: clean
 	docker compose up -d backend0 backend1
 	docker compose run --no-deps test
