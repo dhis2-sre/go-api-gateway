@@ -87,7 +87,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 			continue
 		}
 
-		// Only method and path prefix is indexed in the radix tree, so we might have multiple rules with overlapping which only differs based on headers
+		// Only method and path prefix is indexed in the radix tree, so we might have multiple rules with overlapping paths but differing based on headers
 		if configRule.Method != "" {
 			key := configRule.Method + configRule.PathPrefix
 			ruleMap[key] = append(ruleMap[key], rule)
