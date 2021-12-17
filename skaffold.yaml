@@ -4,6 +4,7 @@ build:
   artifacts:
     - image: dhis2/go-api-gateway
 deploy:
+  statusCheckDeadlineSeconds: 120
   helm:
     releases:
       - name: go-api-gateway-feature
