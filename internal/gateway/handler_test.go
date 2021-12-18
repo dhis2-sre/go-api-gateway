@@ -287,3 +287,92 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 	actual := recorder.Code
 	assert.Equal(t, expected, actual)
 }
+
+func TestHandlerPathReplacePostfix(t *testing.T) {
+	expected := http.StatusOK
+
+	rule := ConfigRule{
+		PathPrefix: "/health/backend0",
+		PathReplace: PathReplace{
+			Target:      "/backend0",
+			Replacement: "",
+		},
+	}
+
+	configRules := []ConfigRule{rule}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
+
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
+
+	handler := ProvideHandler(c, router)
+
+	req, err := http.NewRequest("GET", "/health/backend0", nil)
+	assert.NoError(t, err)
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, req)
+
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
+}
+
+func TestHandlerPathReplacePrefix(t *testing.T) {
+	expected := http.StatusOK
+
+	rule := ConfigRule{
+		PathPrefix: "/backend0/health",
+		PathReplace: PathReplace{
+			Target:      "/backend0",
+			Replacement: "",
+		},
+	}
+
+	configRules := []ConfigRule{rule}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
+
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
+
+	handler := ProvideHandler(c, router)
+
+	req, err := http.NewRequest("GET", "/backend0/health", nil)
+	assert.NoError(t, err)
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, req)
+
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
+}
+
+func TestHandlerPathReplaceWithReplacement(t *testing.T) {
+	expected := http.StatusOK
+
+	rule := ConfigRule{
+		PathPrefix: "/something",
+		PathReplace: PathReplace{
+			Target:      "thing",
+			Replacement: "body",
+		},
+	}
+
+	configRules := []ConfigRule{rule}
+	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
+
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
+
+	handler := ProvideHandler(c, router)
+
+	req, err := http.NewRequest("GET", "/something", nil)
+	assert.NoError(t, err)
+
+	req.Header.Set("Authorization", validAccessToken)
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, req)
+
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
+}

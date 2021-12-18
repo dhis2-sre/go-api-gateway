@@ -26,6 +26,12 @@ func ProvideHandler(c *Config, router *Router) http.HandlerFunc {
 				return
 			}
 
+			target := rule.PathReplace.Target
+			if target != "" {
+				path := strings.Replace(req.URL.Path, target, rule.PathReplace.Replacement, 1)
+				req.URL.Path = path
+			}
+
 			if rule.Authentication == "jwt" {
 				valid, err := validateRequest(publicKey, req)
 				if err != nil {

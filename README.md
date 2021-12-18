@@ -136,6 +136,29 @@ rules:
     block: true
 ```
 
+## Path replacing (URL rewriting)
+
+Multiple backends might serve content from the same paths. To accommodate this use case a URL can be rewritten by replacing part of its path.
+
+```yml
+  - pathPrefix: /something
+    pathReplace:
+      target: thing
+      replacement: body
+```
+
+The above rule would rewrite the incoming request path to `/somebody`
+
+The `replacement` key is optional and defaults to an empty string.
+
+```yml
+  - pathPrefix: /something
+    pathReplace:
+      target: thing
+```
+
+The above rule would rewrite the incoming request path to `/some`
+
 ## Rate Limiting
 
 Rate limiting is done per rule basis by defining the number of requests which are allowed per second and how much burst

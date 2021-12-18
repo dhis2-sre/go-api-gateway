@@ -63,10 +63,16 @@ type Backend struct {
 type ConfigRule struct {
 	Method           string
 	PathPrefix       string
+	PathReplace      PathReplace
 	Block            bool
 	Backend          string
 	Authentication   string
 	RequestPerSecond float64
 	Burst            int
 	Headers          http.Header
+}
+
+type PathReplace struct {
+	Target      string
+	Replacement string
 }

@@ -38,6 +38,11 @@ rules:
   - pathPrefix: /blocked
     block: true
 
+  - pathPrefix: /something
+    pathReplace:
+      target: thing
+      replacement: body
+
   - pathPrefix: / # catch all
     backend: backend1
     authentication: jwt
