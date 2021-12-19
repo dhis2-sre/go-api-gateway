@@ -17,7 +17,7 @@ func ProvideRouter(c *Config) (*Router, error) {
 		return nil, err
 	}
 
-	ruleMap, catchAllRule, err := mapRules(c, backendMap)
+	ruleMap, err := mapRules(c, backendMap)
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +27,7 @@ func ProvideRouter(c *Config) (*Router, error) {
 	}
 
 	return &Router{
-		Rules:        rules,
-		CatchAllRule: catchAllRule,
+		Rules: rules,
 	}, nil
 }
 
@@ -44,12 +43,10 @@ func mapBackends(c *Config) (map[string]*url.URL, error) {
 	return backendMap, nil
 }
 
-func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *Rule, error) {
+func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, error) {
 	httpMethods := []string{"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "CONNECT", "OPTIONS", "TRACE"}
 
 	ruleMap := map[string][]*Rule{}
-	var catchAll *Rule = nil
-
 	for _, configRule := range c.Rules {
 
 		// Use default backend if rule doesn't specify one
@@ -58,7 +55,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 		}
 
 		if configRule.Backend == "" {
-			return nil, nil, errors.New("either a rule needs to define a backend or a default backend needs to be defined")
+			return nil, errors.New("either a rule needs to define a backend or a default backend needs to be defined")
 		}
 
 		// Prefix with basePath if it's defined
@@ -69,11 +66,11 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 		// Create handler
 		backendUrl := backendMap[configRule.Backend]
 		if backendUrl == nil {
-			return nil, nil, errors.New("backend map contains not entry for: " + configRule.Backend)
+			return nil, errors.New("backend map contains not entry for: " + configRule.Backend)
 		}
 		handler, err := newHandler(configRule, backendUrl)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 
 		rule := &Rule{
@@ -81,13 +78,6 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 			Handler:    handler,
 		}
 
-		// Detect catch all rule
-		if configRule.PathPrefix == c.BasePath+"/" {
-			catchAll = rule
-			continue
-		}
-
-		// Only method and path prefix is indexed in the radix tree, so we might have multiple rules with overlapping paths but differing based on headers
 		if configRule.Method != "" {
 			key := configRule.Method + configRule.PathPrefix
 			ruleMap[key] = append(ruleMap[key], rule)
@@ -98,7 +88,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, *R
 			}
 		}
 	}
-	return ruleMap, catchAll, nil
+	return ruleMap, nil
 }
 
 func newHandler(rule ConfigRule, backendUrl *url.URL) (http.Handler, error) {
@@ -121,18 +111,13 @@ func newLimiter(rule ConfigRule) *limiter.Limiter {
 }
 
 type Router struct {
-	Rules        *iradix.Tree
-	CatchAllRule *Rule
+	Rules *iradix.Tree
 }
 
 func (r Router) match(req *http.Request) (bool, *Rule) {
 	match, rule := r.matchRule(req)
 	if match {
 		return true, rule
-	}
-
-	if r.CatchAllRule != nil && r.matchMethod(r.CatchAllRule, req) && r.matchHeaders(r.CatchAllRule, req) {
-		return true, r.CatchAllRule
 	}
 
 	return false, nil

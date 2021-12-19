@@ -42,10 +42,6 @@ func printRules(router *gateway.Router) {
 		return false
 	})
 
-	if router.CatchAllRule != nil {
-		ruleSet[router.CatchAllRule] = SetValue{}
-	}
-
 	log.Printf("Rules %d (tree: %d)", len(ruleSet), router.Rules.Len())
 	for rule := range ruleSet {
 		printRule(rule)

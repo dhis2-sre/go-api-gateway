@@ -253,8 +253,6 @@ The below rule serves as a catch-all rule
 A catch-all rule supports the normal HTTP method and http header matching properties. If any of such are defined it'll *
 only* catch requests matching those criteria.
 
-> **_NOTE:_** Currently, only one catch-all rule will be evaluated. If multiple rules are defined the last one will take precedence.
-
 ### HTTP Method
 
 A tree entry will be created for each HTTP method and the path prefix configured. The entry will be a concatenation of
