@@ -5,6 +5,8 @@ import (
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/hashicorp/go-immutable-radix"
+	"log"
+	"net"
 	"net/http"
 	"net/url"
 )
@@ -78,11 +80,11 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, er
 		}
 
 		if configRule.Method != "" {
-			key := configRule.Method + configRule.PathPrefix
+			key := configRule.Hostname + configRule.Method + configRule.PathPrefix
 			ruleMap[key] = append(ruleMap[key], rule)
 		} else {
 			for _, method := range httpMethods {
-				key := method + configRule.PathPrefix
+				key := configRule.Hostname + method + configRule.PathPrefix
 				ruleMap[key] = append(ruleMap[key], rule)
 			}
 		}
@@ -114,17 +116,15 @@ type Router struct {
 }
 
 func (r Router) match(req *http.Request) (bool, *Rule) {
-	match, rule := r.matchRule(req)
-	if match {
-		return true, rule
+	hostname := r.getHostname(req)
+	key := hostname + req.Method + req.URL.Path
+	_, i, match := r.Rules.Root().LongestPrefix([]byte(key))
+
+	if !match {
+		key := req.Method + req.URL.Path
+		_, i, match = r.Rules.Root().LongestPrefix([]byte(key))
 	}
 
-	return false, nil
-}
-
-func (r Router) matchRule(req *http.Request) (bool, *Rule) {
-	key := req.Method + req.URL.Path
-	_, i, match := r.Rules.Root().LongestPrefix([]byte(key))
 	if match {
 		rules := i.([]*Rule)
 		for _, rule := range rules {
@@ -133,7 +133,17 @@ func (r Router) matchRule(req *http.Request) (bool, *Rule) {
 			}
 		}
 	}
+
 	return false, nil
+}
+
+func (r Router) getHostname(req *http.Request) string {
+	hostname, _, err := net.SplitHostPort(req.Host)
+	if err != nil {
+		// TODO:
+		log.Fatalln(err)
+	}
+	return hostname
 }
 
 func (r Router) matchMethod(rule *Rule, req *http.Request) bool {

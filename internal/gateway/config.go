@@ -63,6 +63,7 @@ type Backend struct {
 type ConfigRule struct {
 	Method           string
 	PathPrefix       string
+	Hostname         string
 	PathReplace      PathReplace
 	Block            bool
 	Backend          string

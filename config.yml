@@ -43,6 +43,14 @@ rules:
       target: thing
       replacement: body
 
+  - pathPrefix: /
+    hostname: backend0.127.0.0.1.nip.io
+    backend: backend0
+
+  - pathPrefix: /
+    hostname: backend1.127.0.0.1.nip.io
+    backend: backend1
+
   - pathPrefix: / # catch all
     backend: backend1
     authentication: jwt

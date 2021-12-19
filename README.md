@@ -138,7 +138,8 @@ rules:
 
 ## Path replacing (URL rewriting)
 
-Multiple backends might serve content from the same paths. To accommodate this use case a URL can be rewritten by replacing part of its path.
+Multiple backends might serve content from the same paths. To accommodate this use case a URL can be rewritten by
+replacing part of its path.
 
 ```yml
   - pathPrefix: /something
@@ -270,12 +271,25 @@ If the method property isn't defined, an entry for each of the following methods
 * DELETE
 * CONNECT
 * OPTIONS
-* TRACE"
+* TRACE
 
-It's therefore considered best practice to specify the HTTP methods a rule should filter by rather than leaving out the
-property.
+It's therefore considered best practice to specify the HTTP method on a rule if possible.
+
+### Hostname
+
+Requests can be matched by hostname as seen below
+
+```yml
+- pathPrefix: /
+  hostname: backend1.127.0.0.1.nip.io
+```
+
+If the hostname property is present on a rule the following key will be used to match
+
+> hostname+method+pathPrefix
 
 ### HTTP Headers
+
 ```yml
 - pathPrefix: /
   headers:
