@@ -276,6 +276,12 @@ It's therefore considered best practice to specify the HTTP methods a rule shoul
 property.
 
 ### HTTP Headers
+```yml
+- pathPrefix: /
+  headers:
+    User-Agent:
+      - HTTPie/2.6.0
+```
 
 # Artifacts
 
