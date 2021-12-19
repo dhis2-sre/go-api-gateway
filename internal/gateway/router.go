@@ -10,8 +10,6 @@ import (
 )
 
 func ProvideRouter(c *Config) (*Router, error) {
-	rules := iradix.New()
-
 	backendMap, err := mapBackends(c)
 	if err != nil {
 		return nil, err
@@ -22,12 +20,13 @@ func ProvideRouter(c *Config) (*Router, error) {
 		return nil, err
 	}
 
-	for path, r := range ruleMap {
-		rules, _, _ = rules.Insert([]byte(path), r)
+	ruleTree := iradix.New()
+	for key, rules := range ruleMap {
+		ruleTree, _, _ = ruleTree.Insert([]byte(key), rules)
 	}
 
 	return &Router{
-		Rules: rules,
+		Rules: ruleTree,
 	}, nil
 }
 
