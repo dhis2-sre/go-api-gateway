@@ -58,8 +58,7 @@ make dev-test
 
 ### Skaffold
 
-Just like `make dev`, the below will automatically recompiled and relaunched the application, so will the below command
-but targeting a Kubernetes cluster.
+Just like `make dev`, the below will automatically recompiled and relaunched the application, but targeting a Kubernetes cluster.
 
 ```sh
 skaffold dev
