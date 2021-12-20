@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/dhis2-sre/go-api-gateway/internal/gateway"
 	"github.com/dhis2-sre/go-api-gateway/internal/health"
 	"log"
@@ -54,9 +55,16 @@ func printRule(rule *gateway.Rule) {
 		method = "*"
 	}
 
-	if rule.RequestPerSecond != 0 {
-		log.Printf("%s %s -> %s - limit(%.2f, %d)", method, rule.PathPrefix, rule.Backend, rule.RequestPerSecond, rule.Burst)
+	logMessage := method
+	if rule.Hostname != "" {
+		logMessage += fmt.Sprintf(" %s%s -> %s", rule.Hostname, rule.PathPrefix, rule.Backend)
 	} else {
-		log.Printf("%s %s -> %s", method, rule.PathPrefix, rule.Backend)
+		logMessage += fmt.Sprintf(" %s -> %s", rule.PathPrefix, rule.Backend)
 	}
+
+	if rule.RequestPerSecond != 0 {
+		logMessage += fmt.Sprintf(" - limit(%.2f, %d)", rule.RequestPerSecond, rule.Burst)
+	}
+
+	log.Println(logMessage)
 }
