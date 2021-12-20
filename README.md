@@ -5,6 +5,45 @@ Lightweight HTTP API Gateway.
 The gateway will perform proxying, rate limiting and token validation based on the rules defined in the
 configuration [file](config.yml).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Dependencies (for development)](#dependencies-for-development)
+- [Quick start](#quick-start)
+- [Development](#development)
+  - [Unit Test Development](#unit-test-development)
+  - [Kubernetes](#kubernetes)
+    - [Health check](#health-check)
+    - [Helm](#helm)
+    - [Helmfile](#helmfile)
+    - [Skaffold](#skaffold)
+- [HTTP Request](#http-request)
+- [Trigger Rate Limiting](#trigger-rate-limiting)
+- [HTTP Response Status Codes](#http-response-status-codes)
+- [Configuration](#configuration)
+  - [Minimal](#minimal)
+  - [Base path](#base-path)
+  - [Blocking](#blocking)
+  - [Path replacing (URL rewriting)](#path-replacing-url-rewriting)
+  - [Rate Limiting](#rate-limiting)
+  - [Token Validation](#token-validation)
+  - [Environment Variables](#environment-variables)
+  - [Request Matching](#request-matching)
+    - [Path Prefix](#path-prefix)
+      - [Catch-all](#catch-all)
+    - [HTTP Method](#http-method)
+    - [Hostname](#hostname)
+    - [HTTP Headers](#http-headers)
+- [Artifacts](#artifacts)
+  - [Binary](#binary)
+  - [Docker Image](#docker-image)
+  - [Helm Chart](#helm-chart)
+- [Credits](#credits)
+- [TODO](#todo)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Dependencies (for development)
 
 * Make
