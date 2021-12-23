@@ -14,10 +14,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	router, err := gateway.ProvideRouter(config)
+	rules, err := gateway.ProvideRules(config)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	router := gateway.ProvideRouter(rules)
 
 	gatewayHandler := gateway.ProvideHandler(config, router)
 	http.HandleFunc("/", gatewayHandler)

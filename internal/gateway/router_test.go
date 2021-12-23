@@ -15,8 +15,10 @@ func TestMatch(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -24,33 +26,6 @@ func TestMatch(t *testing.T) {
 	actual, _ := router.match(req)
 
 	assert.Equal(t, true, actual)
-}
-
-func TestRuleDefinesBackendOrDefaultBackend(t *testing.T) {
-	rule := &ConfigRule{
-		PathPrefix: "/health",
-	}
-
-	configRules := []ConfigRule{*rule}
-	c := &Config{Rules: configRules}
-
-	_, err := ProvideRouter(c)
-	assert.NotNil(t, err)
-	assert.Equal(t, "either a rule needs to define a backend or a default backend needs to be defined", err.Error())
-}
-
-func TestMatchUnmappedBackend(t *testing.T) {
-	rule := &ConfigRule{
-		PathPrefix: "/health",
-		Backend:    "some-undefined-backend",
-	}
-
-	configRules := []ConfigRule{*rule}
-	c := &Config{Rules: configRules}
-
-	_, err := ProvideRouter(c)
-	assert.NotNil(t, err)
-	assert.Equal(t, "backend map contains not entry for: some-undefined-backend", err.Error())
 }
 
 func TestNoMatch(t *testing.T) {
@@ -62,8 +37,10 @@ func TestNoMatch(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/no-match", nil)
 	assert.NoError(t, err)
@@ -84,8 +61,10 @@ func TestMatchWithBasePath(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{BasePath: basePath, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/base-path/health", nil)
 	assert.NoError(t, err)
@@ -121,8 +100,10 @@ func TestMatchSamePathAndMethodButDifferentHeaders(t *testing.T) {
 	configRules := []ConfigRule{*rule0, *rule1}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	req0, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -149,8 +130,10 @@ func TestMatchHostname(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -172,8 +155,10 @@ func TestNoMatchHostname(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -205,8 +190,10 @@ func TestMatchConfigWithMultipleHostnames(t *testing.T) {
 	configRules := []ConfigRule{*ruleA, *ruleB, *ruleC}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	reqA, err := http.NewRequest("GET", "http://a.domain.org/", nil)
 	assert.NoError(t, err)
@@ -237,8 +224,10 @@ func TestMatchSubdomain(t *testing.T) {
 	configRules := []ConfigRule{*ruleA, *ruleB}
 	c := &Config{Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	reqA, err := http.NewRequest("GET", "http://sub.a.domain.org/", nil)
 	assert.NoError(t, err)

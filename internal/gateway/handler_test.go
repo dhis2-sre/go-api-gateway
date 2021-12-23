@@ -39,8 +39,10 @@ func TestHandler(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -65,7 +67,10 @@ func TestHandlerBlock(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -90,7 +95,10 @@ func TestHandlerBlockFalse(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -114,8 +122,10 @@ func TestHandlerRateLimited(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -155,7 +165,10 @@ func TestHandlerUserAgentHeader(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -183,7 +196,10 @@ func TestHandlerUserAgentHeaderNoMatch(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -209,7 +225,10 @@ func TestHandlerNoMatch(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -240,7 +259,10 @@ func TestHandlerJwtAuthentication(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -273,7 +295,10 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -303,8 +328,10 @@ func TestHandlerPathReplacePostfix(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -332,8 +359,10 @@ func TestHandlerPathReplacePrefix(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
@@ -361,8 +390,10 @@ func TestHandlerPathReplaceWithReplacement(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	router, err := ProvideRouter(c)
+	rules, err := ProvideRules(c)
 	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
 
 	handler := ProvideHandler(c, router)
 
