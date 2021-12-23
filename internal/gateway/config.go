@@ -11,7 +11,6 @@ func ProvideConfig() (*Config, error) {
 	viper.AutomaticEnv()
 	viper.SetConfigType("yml")
 
-	var c *Config
 	if err := viper.ReadInConfig(); err != nil {
 		return &Config{}, err
 	}
@@ -30,6 +29,7 @@ func ProvideConfig() (*Config, error) {
 		}
 	}
 
+	var c *Config
 	err := viper.Unmarshal(&c)
 	if err != nil {
 		return &Config{}, err
