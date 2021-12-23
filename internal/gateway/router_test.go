@@ -139,7 +139,7 @@ func TestMatchSamePathAndMethodButDifferentHeaders(t *testing.T) {
 	assert.Equal(t, "backend1", actualRule1.Backend)
 }
 
-func TestMatchWithHostname(t *testing.T) {
+func TestMatchHostname(t *testing.T) {
 	rule := &ConfigRule{
 		PathPrefix: "/health",
 		Hostname:   "url",
@@ -162,7 +162,7 @@ func TestMatchWithHostname(t *testing.T) {
 	assert.Equal(t, "backend0", actualRule.Backend)
 }
 
-func TestNoMatchWithHostname(t *testing.T) {
+func TestNoMatchHostname(t *testing.T) {
 	rule := &ConfigRule{
 		PathPrefix: "/health",
 		Hostname:   "no-match",
@@ -181,4 +181,78 @@ func TestNoMatchWithHostname(t *testing.T) {
 	match, _ := router.match(req)
 
 	assert.Equal(t, false, match)
+}
+
+func TestMatchConfigWithMultipleHostnames(t *testing.T) {
+	ruleA := &ConfigRule{
+		PathPrefix: "/",
+		Hostname:   "a.domain.org",
+		Backend:    "backend0",
+	}
+
+	ruleB := &ConfigRule{
+		PathPrefix: "/",
+		Hostname:   "a.b.domain.org",
+		Backend:    "backend0",
+	}
+
+	ruleC := &ConfigRule{
+		PathPrefix: "/",
+		Hostname:   "a.b.c.domain.org",
+		Backend:    "backend0",
+	}
+
+	configRules := []ConfigRule{*ruleA, *ruleB, *ruleC}
+	c := &Config{Backends: getBackends(), Rules: configRules}
+
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
+
+	reqA, err := http.NewRequest("GET", "http://a.domain.org/", nil)
+	assert.NoError(t, err)
+	assertMatch(t, router, reqA, ruleA.Hostname)
+
+	reqB, err := http.NewRequest("GET", "http://a.b.domain.org/", nil)
+	assert.NoError(t, err)
+	assertMatch(t, router, reqB, ruleB.Hostname)
+
+	reqC, err := http.NewRequest("GET", "http://a.b.c.domain.org/", nil)
+	assert.NoError(t, err)
+	assertMatch(t, router, reqC, ruleC.Hostname)
+}
+
+func TestMatchSubdomain(t *testing.T) {
+	ruleA := &ConfigRule{
+		PathPrefix: "/",
+		Hostname:   "*.a.domain.org",
+		Backend:    "backend0",
+	}
+
+	ruleB := &ConfigRule{
+		PathPrefix: "/",
+		Hostname:   "a.domain.org",
+		Backend:    "backend0",
+	}
+
+	configRules := []ConfigRule{*ruleA, *ruleB}
+	c := &Config{Backends: getBackends(), Rules: configRules}
+
+	router, err := ProvideRouter(c)
+	assert.NoError(t, err)
+
+	reqA, err := http.NewRequest("GET", "http://sub.a.domain.org/", nil)
+	assert.NoError(t, err)
+	assertMatch(t, router, reqA, ruleA.Hostname)
+
+	reqB, err := http.NewRequest("GET", "http://a.domain.org/", nil)
+	assert.NoError(t, err)
+	assertMatch(t, router, reqB, ruleB.Hostname)
+}
+
+func assertMatch(t *testing.T, router *Router, req *http.Request, hostname string) {
+	match, actualRule := router.match(req)
+
+	assert.Equal(t, true, match)
+	assert.Equal(t, hostname, actualRule.Hostname)
+	assert.Equal(t, "backend0", actualRule.Backend)
 }

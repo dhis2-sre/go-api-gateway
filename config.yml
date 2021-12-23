@@ -44,6 +44,10 @@ rules:
       replacement: body
 
   - pathPrefix: /
+    hostname: "*.backend0.127.0.0.1.nip.io"
+    backend: backend0
+
+  - pathPrefix: /
     hostname: backend0.127.0.0.1.nip.io
     backend: backend0
 

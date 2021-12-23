@@ -34,6 +34,8 @@ configuration [file](config.yml).
       - [Catch-all](#catch-all)
     - [HTTP Method](#http-method)
     - [Hostname](#hostname)
+      - [Exact match](#exact-match)
+      - [Subdomain (wildcard matching)](#subdomain-wildcard-matching)
     - [HTTP Headers](#http-headers)
 - [Artifacts](#artifacts)
   - [Binary](#binary)
@@ -97,7 +99,8 @@ make dev-test
 
 ### Skaffold
 
-Just like `make dev`, the below will automatically recompiled and relaunched the application, but targeting a Kubernetes cluster.
+Just like `make dev`, the below will automatically recompiled and relaunched the application, but targeting a Kubernetes
+cluster.
 
 ```sh
 skaffold dev
@@ -315,16 +318,25 @@ It's therefore considered best practice to specify the HTTP method on a rule if 
 
 ### Hostname
 
-Requests can be matched by hostname as seen below
+#### Exact match
+
+Requests can be matched against an exact hostname as seen below.
 
 ```yml
 - pathPrefix: /
-  hostname: backend1.127.0.0.1.nip.io
+  hostname: domain.org
 ```
 
-If the hostname property is present on a rule the following key will be used to match
+#### Subdomain (wildcard matching)
 
-> hostname+method+pathPrefix
+If the hostname is prefixed with a "*". Any subdomain of `domain.org` will match the below rule.
+
+```yml
+- pathPrefix: /
+  hostname: "*.domain.org"
+```
+
+> Do note that the "*" is considered a wildcard for subdomains only and can only be used as a prefix. The following will not work `doma*.org`.
 
 ### HTTP Headers
 

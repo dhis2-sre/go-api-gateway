@@ -9,6 +9,8 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"sort"
+	"strings"
 )
 
 func ProvideRouter(c *Config) (*Router, error) {
@@ -24,6 +26,10 @@ func ProvideRouter(c *Config) (*Router, error) {
 
 	ruleTree := iradix.New()
 	for key, rules := range ruleMap {
+		// Sort by hostname length ensuring we're matching against the longest hostname first
+		sort.Slice(rules, func(i, j int) bool {
+			return len(rules[i].Hostname) > len(rules[j].Hostname)
+		})
 		ruleTree, _, _ = ruleTree.Insert([]byte(key), rules)
 	}
 
@@ -80,11 +86,11 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, er
 		}
 
 		if configRule.Method != "" {
-			key := configRule.Hostname + configRule.Method + configRule.PathPrefix
+			key := configRule.Method + configRule.PathPrefix
 			ruleMap[key] = append(ruleMap[key], rule)
 		} else {
 			for _, method := range httpMethods {
-				key := configRule.Hostname + method + configRule.PathPrefix
+				key := method + configRule.PathPrefix
 				ruleMap[key] = append(ruleMap[key], rule)
 			}
 		}
@@ -116,19 +122,14 @@ type Router struct {
 }
 
 func (r Router) match(req *http.Request) (bool, *Rule) {
-	hostname := r.getHostname(req)
-	key := hostname + req.Method + req.URL.Path
+	key := req.Method + req.URL.Path
 	_, i, match := r.Rules.Root().LongestPrefix([]byte(key))
-
-	if !match {
-		key := req.Method + req.URL.Path
-		_, i, match = r.Rules.Root().LongestPrefix([]byte(key))
-	}
 
 	if match {
 		rules := i.([]*Rule)
+		hostname := r.getHostname(req)
 		for _, rule := range rules {
-			if r.matchHeaders(rule, req) {
+			if r.matchHeaders(rule, req) && r.matchHostname(rule, hostname) {
 				return true, rule
 			}
 		}
@@ -137,11 +138,21 @@ func (r Router) match(req *http.Request) (bool, *Rule) {
 	return false, nil
 }
 
+func (r Router) matchHostname(rule *Rule, hostname string) bool {
+	return rule.Hostname == "" ||
+		(rule.Hostname[0:2] == "*." && strings.HasSuffix(hostname, rule.Hostname[1:])) ||
+		hostname == rule.Hostname
+}
+
 func (r Router) getHostname(req *http.Request) string {
 	hostname, _, err := net.SplitHostPort(req.Host)
 	if err != nil {
-		// TODO:
-		log.Fatalln(err)
+		if strings.HasSuffix(err.Error(), ": missing port in address") {
+			return req.Host
+		}
+		log.Println("Error:", err)
+		log.Println("Request:", req)
+		return ""
 	}
 	return hostname
 }
