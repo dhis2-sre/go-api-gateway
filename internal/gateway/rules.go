@@ -10,17 +10,21 @@ import (
 	"sort"
 )
 
-type Rules *iradix.Tree
+type Rules interface {
+	Lookup(key []byte) (interface{}, bool)
+	Len() int
+	Walk(fn walkFn)
+}
 
 func ProvideRules(c *Config) (Rules, error) {
 	backendMap, err := mapBackends(c)
 	if err != nil {
-		return nil, err
+		return rules{}, err
 	}
 
 	ruleMap, err := mapRules(c, backendMap)
 	if err != nil {
-		return nil, err
+		return rules{}, err
 	}
 
 	ruleTree := iradix.New()
@@ -32,7 +36,28 @@ func ProvideRules(c *Config) (Rules, error) {
 		ruleTree, _, _ = ruleTree.Insert([]byte(key), rules)
 	}
 
-	return ruleTree, nil
+	return rules{ruleTree}, nil
+}
+
+type rules struct {
+	rulesTree *iradix.Tree
+}
+
+func (r rules) Lookup(key []byte) (interface{}, bool) {
+	_, i, match := r.rulesTree.Root().LongestPrefix(key)
+	return i, match
+}
+
+func (r rules) Len() int {
+	return r.rulesTree.Len()
+}
+
+type walkFn func(v interface{}) bool
+
+func (r rules) Walk(fn walkFn) {
+	r.rulesTree.Root().Walk(func(_ []byte, v interface{}) bool {
+		return fn(v)
+	})
 }
 
 func mapBackends(c *Config) (map[string]*url.URL, error) {

@@ -26,18 +26,18 @@ func main() {
 
 	http.HandleFunc("/gateway/health", health.Handler)
 
-	printRules(router)
+	printRules(router.Rules)
 
 	port := config.ServerPort
 	log.Println("Listening on port: " + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func printRules(router *gateway.Router) {
+func printRules(rules gateway.Rules) {
 	type SetValue struct{}
 	ruleSet := map[*gateway.Rule]SetValue{}
 
-	router.Rules.Root().Walk(func(k []byte, i interface{}) bool {
+	rules.Walk(func(i interface{}) bool {
 		rules := i.([]*gateway.Rule)
 		for _, rule := range rules {
 			ruleSet[rule] = SetValue{}
@@ -45,7 +45,7 @@ func printRules(router *gateway.Router) {
 		return false
 	})
 
-	log.Printf("Rules %d (tree: %d)", len(ruleSet), router.Rules.Len())
+	log.Printf("Rules %d (tree: %d)", len(ruleSet), rules.Len())
 	for rule := range ruleSet {
 		printRule(rule)
 	}

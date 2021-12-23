@@ -1,7 +1,6 @@
 package gateway
 
 import (
-	"github.com/hashicorp/go-immutable-radix"
 	"log"
 	"net"
 	"net/http"
@@ -15,12 +14,12 @@ func ProvideRouter(rules Rules) *Router {
 }
 
 type Router struct {
-	Rules *iradix.Tree
+	Rules Rules
 }
 
 func (r Router) match(req *http.Request) (bool, *Rule) {
 	key := req.Method + req.URL.Path
-	_, i, match := r.Rules.Root().LongestPrefix([]byte(key))
+	i, match := r.Rules.Lookup([]byte(key))
 
 	if match {
 		rules := i.([]*Rule)
