@@ -28,6 +28,8 @@ configuration [file](config.yml).
   - [Path replacing (URL rewriting)](#path-replacing-url-rewriting)
   - [Rate Limiting](#rate-limiting)
   - [Token Validation](#token-validation)
+    - [JSON Web Key Set (JWKS)](#json-web-key-set-jwks)
+    - [Static public key](#static-public-key)
   - [Environment Variables](#environment-variables)
   - [Request Matching](#request-matching)
     - [Path Prefix](#path-prefix)
