@@ -6,7 +6,7 @@ defaultBackend: backend0
 
 authentication:
   jwks:
-    host: http://jwks:8080/jwks.json
+    host: http://jwks/jwks.json
     index: 0
     minimumRefreshInterval: 960 # 15 minutes
 #  jwt:
