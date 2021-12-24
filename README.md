@@ -217,7 +217,25 @@ This is implemented using [tollbooth](https://github.com/didip/tollbooth).
 
 ## Token Validation
 
-Token validation is supported via public key validation. Thus a public key needs to be configured as shown below.
+Token validation is supported via public key validation.
+
+> **_NOTE:_** The `jwks` and `jwt` configurations are mutually exclusive and if both are defined the `jwt` configuration is evaluated first and takes precedence.
+
+### JSON Web Key Set (JWKS)
+
+A public key can be retrieved from a remote JWKS if a configuration like the below is specified
+
+```yml
+authentication:
+  jwks:
+    host: http://jwks:8080/jwks.json
+    index: 0
+    minimumRefreshInterval: 960 # 15 minutes
+```
+
+### Static public key
+
+A static public key can be configured as shown below.
 
 ```yml
 authentication:
@@ -336,7 +354,7 @@ If the hostname is prefixed with a "*". Any subdomain of `domain.org` will match
   hostname: "*.domain.org"
 ```
 
-> Do note that the "*" is considered a wildcard for subdomains only and can only be used as a prefix. The following will not work `doma*.org`.
+> **_NOTE:_** The "*" is considered a wildcard for subdomains only and can only be used as a prefix. The following will not work `doma*.org`.
 
 ### HTTP Headers
 
@@ -396,5 +414,4 @@ make publish-helm
 
 * Comment exported types and functions
 * Write more tests
-* Refactor the router to be more readable
 * CICD
