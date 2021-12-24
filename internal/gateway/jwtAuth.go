@@ -30,7 +30,7 @@ func ProvideJwtAuth(c *Config) JwtAuth {
 
 	jwksHost := c.Authentication.Jwks.Host
 	if jwksHost != "" {
-		autoRefresh, err := jwkAutoRefresh(jwksHost, c.Authentication.Jwks.MinimumRefreshInterval)
+		autoRefresh, err := jwkAutoRefresh(jwksHost, c.Authentication.Jwks.MinimumRefreshInterval*time.Second)
 		if err != nil {
 			log.Fatal(err)
 		}
