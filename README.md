@@ -407,7 +407,8 @@ make publish-helm
 
 # Credits
 
-* https://github.com/hashicorp/go-immutable-radix/
+* https://github.com/lestrrat-go/jwx
+* https://github.com/hashicorp/go-immutable-radix
 * https://github.com/didip/tollbooth
 
 # TODO
