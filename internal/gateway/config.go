@@ -3,6 +3,7 @@ package gateway
 import (
 	"github.com/spf13/viper"
 	"net/http"
+	"time"
 )
 
 func ProvideConfig() (*Config, error) {
@@ -48,11 +49,18 @@ type Config struct {
 }
 
 type Authentication struct {
-	Jwt Jwt
+	Jwt  Jwt
+	Jwks Jwks
 }
 
 type Jwt struct {
 	PublicKey string
+}
+
+type Jwks struct {
+	Host                   string
+	Index                  int
+	MinimumRefreshInterval time.Duration
 }
 
 type Backend struct {

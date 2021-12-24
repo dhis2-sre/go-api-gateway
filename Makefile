@@ -12,18 +12,18 @@ push-docker-image:
 	IMAGE_TAG=$(tag) docker compose push prod
 
 dev:
-	docker compose up --build dev backend0 backend1
+	docker compose up --build dev backend0 backend1 jwks
 
 cluster-dev:
 	skaffold dev
 
 test: clean
-	docker compose up -d backend0 backend1
+	docker compose up -d backend0 backend1 jwks
 	docker compose run --no-deps test
 	$(clean-cmd)
 
 dev-test: clean
-	docker compose up -d backend0 backend1
+	docker compose up -d backend0 backend1 jwks
 	docker compose run --no-deps dev-test
 	$(clean-cmd)
 

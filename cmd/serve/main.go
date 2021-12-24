@@ -21,7 +21,9 @@ func main() {
 
 	router := gateway.ProvideRouter(rules)
 
-	gatewayHandler := gateway.ProvideHandler(config, router)
+	auth := gateway.ProvideJwtAuth(config)
+
+	gatewayHandler := gateway.ProvideHandler(router, auth)
 	http.HandleFunc("/", gatewayHandler)
 
 	http.HandleFunc("/gateway/health", health.Handler)

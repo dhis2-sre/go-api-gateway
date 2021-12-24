@@ -18,6 +18,7 @@ services:
     depends_on:
       - backend0
       - backend1
+      - jwks
 
   test:
     <<: *common-dev-test
@@ -38,3 +39,8 @@ services:
 
   backend1:
     image: tons/whoami-go:0.5.0
+
+  jwks:
+    image: nginx:alpine
+    volumes:
+      - ./jwks.json:/usr/share/nginx/html/jwks.json

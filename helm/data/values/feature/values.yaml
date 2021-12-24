@@ -8,20 +8,19 @@ ingress:
 configuration:
   serverPort: 8080
   basePath: /skaffold
-  defaultBackend: http://instance-manager-api-skaffold.instance-manager-feature.svc:8080
+  defaultBackend: im-user
+
+  backends:
+    - name: im-user
+      url: http://im-users-feature.instance-manager-feature.svc:8080
+    - name: im-manager
+      url: http://im-manager-feature-go-chart.instance-manager-feature.svc:8080
 
   authentication:
-    jwt:
-      publicKey: |
-        -----BEGIN PUBLIC KEY-----
-        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0ViQyr0XGRYgpGRO1Tk2
-        pQUwPK5092T1Vsk6i9GYagq/ceWQL4Eonb1t1SGWz78lgIMp3NQ4PdBlGCsq1ajR
-        /X2rDFjKxobGfVYmtHu1B6UJ+fagVikmKuJ/kzgxLx/es0IavqOLHnCSgko1bs2j
-        SFb/wwvkZ4zI1Hy4OSdkawJlTt6UJzmQVdb9AsLTv2DOMhYHmR7PCuKRptgzgjjY
-        0UurgeZgDmD6RQo9tKv5B0SLjXkWuAiKsRJMTQ9EIl6qkRUm530Ps5P01m8OXhpN
-        5YyHTJgoBNzbetWDR0Ml5eKKZMvb3oP/lOMnmXa1CUvxOgr8ENjYdJoQY+7ZwPRT
-        1wIDAQAB
-        -----END PUBLIC KEY-----
+    jwks:
+      host: http://im-users-feature.instance-manager-feature.svc:8080/skaffold/jwks
+      index: 0
+      minimumRefreshInterval: 960 # 15 minutes
 
   rules:
 # http https://api.im.feature.test.c.dhis2.org/skaffold/health
@@ -29,10 +28,40 @@ configuration:
       method: GET
       requestPerSecond: 50
       burst: 5
+
 # http --auth andreas@something.org:yesyes post https://api.im.feature.test.c.dhis2.org/skaffold/signin
     - pathPrefix: /signup
       method: POST
+
     - pathPrefix: /signin
+      method: POST
+
     - pathPrefix: /refresh
+      method: POST
+
+    - pathPrefix: /docs/im-user
+      pathReplace:
+        target: /im-user
+        replacement: ""
+      method: GET
+
+    - pathPrefix: /swagger.yaml
+      method: GET
+
+    - pathPrefix: /me
+      method: GET
+      authentication: jwt
+
+    - pathPrefix: /groups
+      authentication: jwt
+
+    - pathPrefix: /stacks
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /instances
+      backend: im-manager
+      authentication: jwt
+
     - pathPrefix: /
       authentication: jwt

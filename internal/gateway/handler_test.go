@@ -27,7 +27,7 @@ L5MOEBOftYLRwmGFWrXf5s9jccku0FPid2wtZEwsv5Sa+Yvr36KHtrr+PSFksOB1
 0QIDAQAB
 -----END PUBLIC KEY-----`
 
-const validAccessToken = `Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3OTExNTQ0MTUsImlhdCI6MTYzNzU1NDQxNX0.PtQp6_k5bQ9KE9uk520i4emVnUmxFD8DxyeZsfzgT6CY2oMyXEm7zlIA-4_xz2Q7CrSeqnWxpy0coK9MN0EPE2vhFomTrP6D3l7_lX6Dyn1gH6zWpjC_dRqOSRv3AqS3buZiC-vNwCatLhu6WE74cykBAE2veIr8Gp_ebiITXJKiHBNaTlPk2WEfcJ1NL3g7nafy6l-V4h2-Vj3tapJQiLfpgReIXYIswFYH7En7qy94fL0eOUbZzQI9fOuiXvAN-owR3GYcbwz9Hll23VACWsekMJdDBEgUSdek9JOmRHGxko6FE79-_ClYvF1dGUgZB2mDwY_xF2TOG2q3XDi9Aw`
+const validAccessToken = `eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3OTExNTQ0MTUsImlhdCI6MTYzNzU1NDQxNX0.PtQp6_k5bQ9KE9uk520i4emVnUmxFD8DxyeZsfzgT6CY2oMyXEm7zlIA-4_xz2Q7CrSeqnWxpy0coK9MN0EPE2vhFomTrP6D3l7_lX6Dyn1gH6zWpjC_dRqOSRv3AqS3buZiC-vNwCatLhu6WE74cykBAE2veIr8Gp_ebiITXJKiHBNaTlPk2WEfcJ1NL3g7nafy6l-V4h2-Vj3tapJQiLfpgReIXYIswFYH7En7qy94fL0eOUbZzQI9fOuiXvAN-owR3GYcbwz9Hll23VACWsekMJdDBEgUSdek9JOmRHGxko6FE79-_ClYvF1dGUgZB2mDwY_xF2TOG2q3XDi9Aw`
 
 func TestHandler(t *testing.T) {
 	expected := http.StatusOK
@@ -44,7 +44,9 @@ func TestHandler(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -72,7 +74,9 @@ func TestHandlerBlock(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -100,7 +104,9 @@ func TestHandlerBlockFalse(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -127,7 +133,9 @@ func TestHandlerRateLimited(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
@@ -170,7 +178,9 @@ func TestHandlerUserAgentHeader(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -201,7 +211,9 @@ func TestHandlerUserAgentHeaderNoMatch(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -230,7 +242,9 @@ func TestHandlerNoMatch(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/no-match", nil)
 	assert.NoError(t, err)
@@ -264,7 +278,9 @@ func TestHandlerJwtAuthentication(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -300,7 +316,9 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -333,7 +351,9 @@ func TestHandlerPathReplacePostfix(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health/backend0", nil)
 	assert.NoError(t, err)
@@ -364,7 +384,9 @@ func TestHandlerPathReplacePrefix(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/backend0/health", nil)
 	assert.NoError(t, err)
@@ -395,12 +417,12 @@ func TestHandlerPathReplaceWithReplacement(t *testing.T) {
 
 	router := ProvideRouter(rules)
 
-	handler := ProvideHandler(c, router)
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/something", nil)
 	assert.NoError(t, err)
-
-	req.Header.Set("Authorization", validAccessToken)
 
 	recorder := httptest.NewRecorder()
 	handler.ServeHTTP(recorder, req)
