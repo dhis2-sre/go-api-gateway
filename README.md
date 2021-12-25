@@ -127,11 +127,11 @@ seq 10 | xargs -P 4 -I '{}' http post :8080/health
 The following status codes could be returned by the gateway but could also originate from the server which the request
 was proxied to
 
-| Code | Meaning | Reason |
-| --- | --- | --- |
-| 403 | Forbidden | Invalid token |
-| 421 | Misdirected Request | No matching rule found |
-| 429 | Too Many Requests | Rate limits exceeded |
+| Code | Meaning             | Reason                 |
+|------|---------------------|------------------------|
+| 403  | Forbidden           | Invalid token          |
+| 421  | Misdirected Request | No matching rule found |
+| 429  | Too Many Requests   | Rate limits exceeded   |
 
 # Configuration
 
@@ -275,12 +275,12 @@ http get :8080/ "Authorization: Bearer $ACCESS_TOKEN"
 
 The following environment variables are support and will take precedence over values defined in the configuration file.
 
-| Variable | Configuration path |
-| --- | --- |
-| APIG_SERVER_PORT | serverPort |
-| APIG_BASE_PATH | basePath |
-| APIG_DEFAULT_BACKEND | defaultBackend |
-| APIG_PUBLIC_KEY | authentication.jwt.publicKey |
+| Variable             | Configuration path           |
+|----------------------|------------------------------|
+| APIG_SERVER_PORT     | serverPort                   |
+| APIG_BASE_PATH       | basePath                     |
+| APIG_DEFAULT_BACKEND | defaultBackend               |
+| APIG_PUBLIC_KEY      | authentication.jwt.publicKey |
 
 ## Request Matching
 
