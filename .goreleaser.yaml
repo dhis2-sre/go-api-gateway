@@ -1,0 +1,5 @@
+builds:
+  - main: ./cmd/serve
+dockers:
+  - image_templates:
+      - "dhis2/go-api-gateway:{{ .Tag }}"
