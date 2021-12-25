@@ -230,7 +230,7 @@ A public key can be retrieved from a remote JWKS if a configuration like the bel
 ```yml
 authentication:
   jwks:
-    host: http://jwks:8080/jwks.json
+    host: http://jwks/jwks.json
     index: 0
     minimumRefreshInterval: 960 # 15 minutes
 ```
