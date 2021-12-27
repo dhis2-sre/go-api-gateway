@@ -80,12 +80,12 @@ type jwtAuth struct {
 }
 
 func (j jwtAuth) ValidateRequest(req *http.Request) (bool, error) {
-	if j.publicKey != nil {
-		return j.validatePublicKey(req)
-	}
-
 	if j.autoRefresh != nil {
 		return j.validateJwks(req)
+	}
+
+	if j.publicKey != nil {
+		return j.validatePublicKey(req)
 	}
 
 	return false, errors.New("no validator configured")

@@ -221,7 +221,7 @@ This is implemented using [tollbooth](https://github.com/didip/tollbooth).
 
 Token validation is supported via public key validation.
 
-> **_NOTE:_** The `jwks` and `jwt` configurations are mutually exclusive and if both are defined the `jwt` configuration is evaluated first and takes precedence.
+> **_NOTE:_** The `jwks` and `jwt` configurations are mutually exclusive and if both are defined the `jwks` configuration is evaluated first and takes precedence.
 
 ### JSON Web Key Set (JWKS)
 
