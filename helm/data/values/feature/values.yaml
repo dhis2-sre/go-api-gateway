@@ -15,6 +15,8 @@ configuration:
       url: http://im-user-feature.instance-manager-feature.svc:8080
     - name: im-manager
       url: http://im-manager-feature-go-chart.instance-manager-feature.svc:8080
+    - name: im-database-manager
+      url: http://im-database-manager-feature.instance-manager-feature.svc:8080
 
   authentication:
     jwks:
@@ -23,30 +25,20 @@ configuration:
       minimumRefreshInterval: 960 # 15 minutes
 
   rules:
-# http https://api.im.feature.test.c.dhis2.org/skaffold/health
-    - pathPrefix: /health
+## User
+    - pathPrefix: /users/health
       method: GET
-      requestPerSecond: 50
-      burst: 5
+      pathReplace:
+        target: /users
 
-# http --auth andreas@something.org:yesyes post https://api.im.feature.test.c.dhis2.org/skaffold/signin
-    - pathPrefix: /signup
+    - pathPrefix: /users
       method: POST
 
-    - pathPrefix: /signin
+    - pathPrefix: /tokens
       method: POST
 
     - pathPrefix: /refresh
       method: POST
-
-    - pathPrefix: /docs/im-user
-      pathReplace:
-        target: /im-user
-        replacement: ""
-      method: GET
-
-    - pathPrefix: /swagger.yaml
-      method: GET
 
     - pathPrefix: /me
       method: GET
@@ -54,6 +46,21 @@ configuration:
 
     - pathPrefix: /groups
       authentication: jwt
+
+    - pathPrefix: /users/docs
+      pathReplace:
+        target: /users
+
+    - pathPrefix: /users/swagger.yaml
+      pathReplace:
+        target: /users
+
+## Manager
+    - pathPrefix: /instances/health
+      method: GET
+      pathReplace:
+        target: /instances
+      backend: im-manager
 
     - pathPrefix: /stacks
       backend: im-manager
@@ -63,5 +70,42 @@ configuration:
       backend: im-manager
       authentication: jwt
 
+    - pathPrefix: /instances/health
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+    - pathPrefix: /instances/swagger.yaml
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+    - pathPrefix: /instances/docs
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+## Database Manager
+    - pathPrefix: /databases/health
+      method: GET
+      pathReplace:
+        target: /databases
+      backend: im-database-manager
+
+    - pathPrefix: /databases
+      backend: im-database-manager
+      authentication: jwt
+
+    - pathPrefix: /databases/swagger.yaml
+      pathReplace:
+        target: /databases
+      backend: im-database-manager
+
+    - pathPrefix: /databases/docs
+      pathReplace:
+        target: /databases
+      backend: im-database-manager
+
+## Everything else
     - pathPrefix: /
       authentication: jwt
