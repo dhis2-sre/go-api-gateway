@@ -17,6 +17,8 @@ configuration:
       url: http://im-manager-feature-go-chart.instance-manager-feature.svc:8080
     - name: im-database-manager
       url: http://im-database-manager-feature.instance-manager-feature.svc:8080
+    - name: im-job
+      url: http://im-job-feature.instance-manager-feature.svc:8080
 
   authentication:
     jwks:
@@ -105,6 +107,27 @@ configuration:
       pathReplace:
         target: /databases
       backend: im-database-manager
+
+## Jobs
+    - pathPrefix: /jobs/health
+      method: GET
+      pathReplace:
+        target: /jobs
+      backend: im-job
+
+    - pathPrefix: /jobs
+      backend: im-job
+      authentication: jwt
+
+    - pathPrefix: /jobs/swagger.yaml
+      pathReplace:
+        target: /jobs
+      backend: im-job
+
+    - pathPrefix: /jobs/docs
+      pathReplace:
+        target: /jobs
+      backend: im-job
 
 ## Everything else
     - pathPrefix: /
