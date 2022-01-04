@@ -7,8 +7,8 @@ deploy:
   statusCheckDeadlineSeconds: 120
   helm:
     releases:
-      - name: go-api-gateway-feature
-        namespace: instance-manager-feature
+      - name: go-api-gateway-{{ .ENVIRONMENT }}
+        namespace: instance-manager-{{ .ENVIRONMENT }}
         createNamespace: true
         chartPath: helm/chart
         artifactOverrides:
@@ -17,4 +17,4 @@ deploy:
           helm: { }
         useHelmSecrets: true
         valuesFiles:
-          - helm/data/values/feature/values.yaml
+          - helm/data/values/{{ .ENVIRONMENT }}/values.yaml
