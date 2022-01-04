@@ -1,0 +1,134 @@
+image:
+  pullPolicy: Always
+
+ingress:
+  hostname: api.im.dev.test.c.dhis2.org
+  certIssuer: cert-issuer-prod
+
+configuration:
+  serverPort: 8080
+  basePath:
+  defaultBackend: im-user
+
+  backends:
+    - name: im-user
+      url: http://im-user-dev.instance-manager-dev.svc:8080
+    - name: im-manager
+      url: http://im-manager-dev-go-chart.instance-manager-dev.svc:8080
+    - name: im-database-manager
+      url: http://im-database-manager-dev.instance-manager-dev.svc:8080
+    - name: im-job
+      url: http://im-job-dev.instance-manager-dev.svc:8080
+
+  authentication:
+    jwks:
+      host: http://im-user-dev.instance-manager-dev.svc:8080/jwks
+      index: 0
+      minimumRefreshInterval: 960 # 15 minutes
+
+  rules:
+## User
+    - pathPrefix: /users/health
+      method: GET
+      pathReplace:
+        target: /users
+
+    - pathPrefix: /users
+      method: POST
+
+    - pathPrefix: /tokens
+      method: POST
+
+    - pathPrefix: /refresh
+      method: POST
+
+    - pathPrefix: /me
+      method: GET
+      authentication: jwt
+
+    - pathPrefix: /groups
+      authentication: jwt
+
+    - pathPrefix: /users/docs
+      pathReplace:
+        target: /users
+
+    - pathPrefix: /users/swagger.yaml
+      pathReplace:
+        target: /users
+
+## Manager
+    - pathPrefix: /instances/health
+      method: GET
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+    - pathPrefix: /stacks
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /instances
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /instances/health
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+    - pathPrefix: /instances/swagger.yaml
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+    - pathPrefix: /instances/docs
+      pathReplace:
+        target: /instances
+      backend: im-manager
+
+## Database Manager
+    - pathPrefix: /databases/health
+      method: GET
+      pathReplace:
+        target: /databases
+      backend: im-database-manager
+
+    - pathPrefix: /databases
+      backend: im-database-manager
+      authentication: jwt
+
+    - pathPrefix: /databases/swagger.yaml
+      pathReplace:
+        target: /databases
+      backend: im-database-manager
+
+    - pathPrefix: /databases/docs
+      pathReplace:
+        target: /databases
+      backend: im-database-manager
+
+    ## Jobs
+    - pathPrefix: /jobs/health
+      method: GET
+      pathReplace:
+        target: /jobs
+      backend: im-job
+
+    - pathPrefix: /jobs
+      backend: im-job
+      authentication: jwt
+
+    - pathPrefix: /jobs/swagger.yaml
+      pathReplace:
+        target: /jobs
+      backend: im-job
+
+    - pathPrefix: /jobs/docs
+      pathReplace:
+        target: /jobs
+      backend: im-job
+
+## Everything else
+    - pathPrefix: /
+      authentication: jwt
