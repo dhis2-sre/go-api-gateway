@@ -87,9 +87,12 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, er
 			return nil, errors.New("either a rule needs to define a backend or a default backend needs to be defined")
 		}
 
-		// Prefix with basePath if it's defined
 		if c.BasePath != "" {
 			configRule.PathPrefix = c.BasePath + configRule.PathPrefix
+			// don't add trailing / if it's a catch-all rules
+			if configRule.PathPrefix == c.BasePath+"/" {
+				configRule.PathPrefix = c.BasePath
+			}
 		}
 
 		// Create handler
