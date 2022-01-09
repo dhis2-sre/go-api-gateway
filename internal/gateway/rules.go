@@ -89,7 +89,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, er
 
 		if c.BasePath != "" {
 			configRule.PathPrefix = c.BasePath + configRule.PathPrefix
-			// don't add trailing / if it's a catch-all rules
+			// don't add trailing / if it's a catch-all rule
 			if configRule.PathPrefix == c.BasePath+"/" {
 				configRule.PathPrefix = c.BasePath
 			}
