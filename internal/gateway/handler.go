@@ -25,7 +25,7 @@ func ProvideHandler(router *Router, auth JwtAuth) http.HandlerFunc {
 				valid, err := auth.ValidateRequest(req)
 				if err != nil {
 					log.Println(err)
-					w.WriteHeader(http.StatusForbidden)
+					http.Error(w, err.Error(), http.StatusForbidden)
 					return
 				}
 				if !valid {
@@ -39,6 +39,7 @@ func ProvideHandler(router *Router, auth JwtAuth) http.HandlerFunc {
 			rule.Handler.ServeHTTP(w, req)
 			return
 		}
+		log.Printf("No match: %+v", req)
 		w.WriteHeader(http.StatusMisdirectedRequest)
 	}
 }
