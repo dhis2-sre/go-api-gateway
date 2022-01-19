@@ -8,6 +8,19 @@ import (
 
 func ProvideHandler(router *Router, auth JwtAuth) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
+		contentType := req.Header.Get("Content-Type")
+		log.Println("ContentType:", contentType)
+		if strings.HasPrefix(contentType, "multipart/form-data") {
+			log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111111111")
+			if err := req.ParseMultipartForm(256 << 20); err != nil {
+				log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11err")
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
+
 		log.Printf("%s %s%s", req.Method, req.URL.Host, req.URL.Path)
 		if match, rule := router.match(req); match {
 			if rule.Block {
