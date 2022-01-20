@@ -4,6 +4,8 @@ image:
 ingress:
   hostname: api.im.feature.test.c.dhis2.org
   certIssuer: cert-issuer-prod
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 128m
 
 configuration:
   serverPort: 8080
@@ -94,10 +96,6 @@ configuration:
         target: /databases
       backend: im-database-manager
 
-    - pathPrefix: /databases
-      backend: im-database-manager
-      authentication: jwt
-
     - pathPrefix: /databases/swagger.yaml
       pathReplace:
         target: /databases
@@ -107,6 +105,10 @@ configuration:
       pathReplace:
         target: /databases
       backend: im-database-manager
+
+    - pathPrefix: /databases
+      backend: im-database-manager
+      authentication: jwt
 
 ## Jobs
     - pathPrefix: /jobs/health
