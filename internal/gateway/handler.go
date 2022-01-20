@@ -1,6 +1,8 @@
 package gateway
 
 import (
+	"bytes"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -8,17 +10,22 @@ import (
 
 func ProvideHandler(router *Router, auth JwtAuth) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
 		contentType := req.Header.Get("Content-Type")
-		log.Println("ContentType:", contentType)
 		if strings.HasPrefix(contentType, "multipart/form-data") {
-			log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111111111")
-			if err := req.ParseMultipartForm(256 << 20); err != nil {
-				log.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11err")
-				log.Println(err)
+			body, err := ioutil.ReadAll(req.Body)
+			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
+
+			req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
+			if err := req.ParseMultipartForm(256 << 20); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 		}
 
 		log.Printf("%s %s%s", req.Method, req.URL.Host, req.URL.Path)
