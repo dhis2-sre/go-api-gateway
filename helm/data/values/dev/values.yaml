@@ -4,6 +4,8 @@ image:
 ingress:
   hostname: api.im.dev.test.c.dhis2.org
   certIssuer: cert-issuer-prod
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 128m
 
 configuration:
   serverPort: 8080
