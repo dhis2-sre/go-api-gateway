@@ -1,9 +1,14 @@
 package gateway
 
 import (
+	"bytes"
 	"github.com/stretchr/testify/assert"
+	"io"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -46,9 +51,70 @@ func TestHandler(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	assert.NoError(t, err)
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, req)
+
+	actual := recorder.Code
+	assert.Equal(t, expected, actual)
+}
+
+func TestMaxMultipart(t *testing.T) {
+	// TODO:
+	return
+
+	expected := http.StatusOK
+
+	rule := ConfigRule{
+		PathPrefix: "/health",
+	}
+
+	configRules := []ConfigRule{rule}
+	c := &Config{DefaultBackend: defaultBackend, MaxMultipartSize: 2, Backends: getBackends(), Rules: configRules}
+
+	rules, err := ProvideRules(c)
+	assert.NoError(t, err)
+
+	router := ProvideRouter(rules)
+
+	jwtAuth := ProvideJwtAuth(c)
+
+	handler := ProvideHandler(c, router, jwtAuth)
+
+	var b bytes.Buffer
+	w := multipart.NewWriter(&b)
+
+	file, err := ioutil.TempFile("/tmp", "go-api-gateway-test")
+	assert.NoError(t, err)
+
+	defer func(name string) {
+		err := os.Remove(name)
+		assert.NoError(t, err)
+	}(file.Name())
+
+	data := make([]byte, 20<<20)
+	_, err = file.Write(data)
+	assert.NoError(t, err)
+
+	var fw io.Writer
+	if fw, err = w.CreateFormFile("whatever", file.Name()); err != nil {
+		assert.NoError(t, err)
+	}
+
+	if _, err = io.Copy(fw, file); err != nil {
+		assert.NoError(t, err)
+	}
+
+	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", &b)
+	assert.NoError(t, err)
+
+	req.Header.Set("Content-Type", w.FormDataContentType())
+
+	err = w.Close()
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -76,7 +142,7 @@ func TestHandlerBlock(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -106,7 +172,7 @@ func TestHandlerBlockFalse(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -135,7 +201,7 @@ func TestHandlerRateLimited(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
@@ -180,7 +246,7 @@ func TestHandlerUserAgentHeader(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -213,7 +279,7 @@ func TestHandlerUserAgentHeaderNoMatch(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -244,7 +310,7 @@ func TestHandlerNoMatch(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/no-match", nil)
 	assert.NoError(t, err)
@@ -280,7 +346,7 @@ func TestHandlerJwtAuthentication(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -318,7 +384,7 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -353,7 +419,7 @@ func TestHandlerPathReplacePostfix(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health/backend0", nil)
 	assert.NoError(t, err)
@@ -386,7 +452,7 @@ func TestHandlerPathReplacePrefix(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/backend0/health", nil)
 	assert.NoError(t, err)
@@ -419,7 +485,7 @@ func TestHandlerPathReplaceWithReplacement(t *testing.T) {
 
 	jwtAuth := ProvideJwtAuth(c)
 
-	handler := ProvideHandler(router, jwtAuth)
+	handler := ProvideHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/something", nil)
 	assert.NoError(t, err)
