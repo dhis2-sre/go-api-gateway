@@ -6,9 +6,10 @@ import (
 	"strings"
 )
 
-func ProvideHandler(router *Router, auth JwtAuth) http.HandlerFunc {
+func ProvideHandler(config *Config, router *Router, auth JwtAuth) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		log.Printf("%s %s%s", req.Method, req.URL.Host, req.URL.Path)
+
 		if match, rule := router.match(req); match {
 			if rule.Block {
 				w.WriteHeader(http.StatusForbidden)
@@ -34,11 +35,17 @@ func ProvideHandler(router *Router, auth JwtAuth) http.HandlerFunc {
 				}
 			}
 
+			contentType := req.Header.Get("Content-Type")
+			if strings.HasPrefix(contentType, "multipart/form-data") {
+				req.Body = http.MaxBytesReader(w, req.Body, config.MaxMultipartSize<<20)
+			}
+
 			// TODO: This is only necessary if the service behind this gateway is using the http host header... Maybe this should be done differently?
 			fixHost(req, rule.Backend)
 			rule.Handler.ServeHTTP(w, req)
 			return
 		}
+
 		log.Printf("No match: %+v", req)
 		w.WriteHeader(http.StatusMisdirectedRequest)
 	}

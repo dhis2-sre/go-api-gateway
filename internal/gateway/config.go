@@ -19,6 +19,7 @@ func ProvideConfig() (*Config, error) {
 	bindMap := map[string]string{
 		"serverport":                   "APIG_SERVER_PORT",
 		"basepath":                     "APIG_BASE_PATH",
+		"maxmultipartsize":             "APIG_MAX_MULTIPART_SIZE",
 		"defaultbackend":               "APIG_DEFAULT_BACKEND",
 		"authentication.jwt.publickey": "APIG_PUBLIC_KEY",
 	}
@@ -30,6 +31,8 @@ func ProvideConfig() (*Config, error) {
 		}
 	}
 
+	viper.SetDefault("maxmultipartsize", 2)
+
 	var c *Config
 	err := viper.Unmarshal(&c)
 	if err != nil {
@@ -40,12 +43,13 @@ func ProvideConfig() (*Config, error) {
 }
 
 type Config struct {
-	ServerPort     string
-	BasePath       string
-	DefaultBackend string
-	Authentication Authentication
-	Backends       []Backend
-	Rules          []ConfigRule
+	ServerPort       string
+	BasePath         string
+	MaxMultipartSize int64
+	DefaultBackend   string
+	Authentication   Authentication
+	Backends         []Backend
+	Rules            []ConfigRule
 }
 
 type Authentication struct {
