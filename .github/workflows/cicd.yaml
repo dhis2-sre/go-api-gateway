@@ -1,0 +1,27 @@
+name: Tests, build and deploy
+
+on:
+  push:
+    branches:
+      - master
+      - feature/**
+    tags:
+      - v*.*.*
+
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  call-workflow:
+    uses: dhis2-sre/gha-workflows/.github/workflows/instance-manager.yaml@master
+    with:
+      PROCESS_NAME: go-api-gateway
+      POD_NAME: go-api-gateway
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      SOPS_KMS_ARN: ${{ secrets.SOPS_KMS_ARN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
