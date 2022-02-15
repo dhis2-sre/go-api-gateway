@@ -11,6 +11,9 @@ docker-image:
 push-docker-image:
 	IMAGE_TAG=$(tag) docker compose push prod
 
+smoke-test:
+	IMAGE_TAG=$(tag) docker compose up -d prod
+
 dev:
 	docker compose up --build dev backend0 backend1 jwks
 
