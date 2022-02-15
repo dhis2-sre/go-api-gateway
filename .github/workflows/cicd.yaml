@@ -18,6 +18,7 @@ jobs:
     with:
       PROCESS_NAME: go-api-gateway
       POD_NAME: go-api-gateway
+      HEALTH_CHECK_ENDPOINT: /gateway/health
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
