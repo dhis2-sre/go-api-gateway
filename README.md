@@ -420,3 +420,6 @@ make publish-helm
 * Config validation
 * * If publicKey == nil && c.Rules... wants to authenticate... complain
 * * If config.DefaultBackend == nil && c.Rules... has no backend... complain
+* * Identical rules
+* Don't return 502 when the backend isn't found
+2022/01/04 01:54:11 http: proxy error: dial tcp: lookup im-job-dev.instance-manager-dev.svc on 172.20.0.10:53: no such host
