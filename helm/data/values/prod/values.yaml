@@ -2,30 +2,29 @@ image:
   pullPolicy: Always
 
 ingress:
-  hostname: api.im.feature.test.c.dhis2.org
+  hostname: api.im.prod.test.c.dhis2.org
   certIssuer: cert-issuer-prod
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 128m
 
 configuration:
   serverPort: 8080
-  basePath: /skaffold
-  maxMultipartSize: 128
+  basePath:
   defaultBackend: im-user
 
   backends:
     - name: im-user
-      url: http://im-user-feature.instance-manager-feature.svc:8080
+      url: http://im-user-prod.instance-manager-prod.svc:8080
     - name: im-manager
-      url: http://im-manager-feature-go-chart.instance-manager-feature.svc:8080
+      url: http://im-manager-prod-go-chart.instance-manager-prod.svc:8080
     - name: im-database-manager
-      url: http://im-database-manager-feature.instance-manager-feature.svc:8080
+      url: http://im-database-manager-prod.instance-manager-prod.svc:8080
     - name: im-job
-      url: http://im-job-feature.instance-manager-feature.svc:8080
+      url: http://im-job-prod.instance-manager-prod.svc:8080
 
   authentication:
     jwks:
-      host: http://im-user-feature.instance-manager-feature.svc:8080/skaffold/jwks
+      host: http://im-user-prod.instance-manager-prod.svc:8080/jwks
       index: 0
       minimumRefreshInterval: 960 # 15 minutes
 
@@ -63,7 +62,7 @@ configuration:
     - pathPrefix: /jwks
       method: GET
 
-    ## Manager
+## Manager
     - pathPrefix: /instances/health
       method: GET
       pathReplace:
@@ -100,6 +99,10 @@ configuration:
         target: /databases
       backend: im-database-manager
 
+    - pathPrefix: /databases
+      backend: im-database-manager
+      authentication: jwt
+
     - pathPrefix: /databases/swagger.yaml
       pathReplace:
         target: /databases
@@ -110,11 +113,7 @@ configuration:
         target: /databases
       backend: im-database-manager
 
-    - pathPrefix: /databases
-      backend: im-database-manager
-      authentication: jwt
-
-## Jobs
+    ## Jobs
     - pathPrefix: /jobs/health
       method: GET
       pathReplace:
