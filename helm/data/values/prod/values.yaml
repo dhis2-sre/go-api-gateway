@@ -5,7 +5,7 @@ ingress:
   hostname: api.im.prod.test.c.dhis2.org
   certIssuer: cert-issuer-prod
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 128m
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
 
 configuration:
   serverPort: 8080
