@@ -7,6 +7,14 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
 
+resources:
+  limits:
+    cpu: 100m
+    memory: 32Mi
+  requests:
+    cpu: 100m
+    memory: 16Mi
+
 configuration:
   serverPort: 8080
   basePath:
