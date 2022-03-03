@@ -37,6 +37,7 @@ securityContext:
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 405
+  runAsGroup: 100
 
 service:
   type: ClusterIP
