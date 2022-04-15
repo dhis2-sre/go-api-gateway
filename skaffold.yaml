@@ -15,6 +15,5 @@ deploy:
           image: dhis2/go-api-gateway
         imageStrategy:
           helm: { }
-        useHelmSecrets: true
         valuesFiles:
           - helm/data/values/{{ .ENVIRONMENT }}/values.yaml
