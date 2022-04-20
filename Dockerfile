@@ -12,4 +12,4 @@ RUN apk --no-cache -U upgrade
 WORKDIR /app
 COPY --from=build /app/go-api-gateway .
 USER guest
-CMD ["/app/go-api-gateway"]
+ENTRYPOINT ["/app/go-api-gateway"]
