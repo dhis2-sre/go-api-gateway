@@ -7,7 +7,7 @@ RUN go mod download -x
 COPY . .
 RUN go build -o /app/go-api-gateway -ldflags "-s -w" ./cmd/serve
 
-FROM alpine:3.14
+FROM alpine:3.15
 RUN apk --no-cache -U upgrade
 WORKDIR /app
 COPY --from=build /app/go-api-gateway .
