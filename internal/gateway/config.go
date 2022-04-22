@@ -1,9 +1,10 @@
 package gateway
 
 import (
-	"github.com/spf13/viper"
 	"net/http"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 func ProvideConfig() (*Config, error) {

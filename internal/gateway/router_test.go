@@ -1,9 +1,10 @@
 package gateway
 
 import (
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMatch(t *testing.T) {

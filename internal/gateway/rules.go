@@ -2,12 +2,13 @@ package gateway
 
 import (
 	"errors"
-	"github.com/didip/tollbooth/v6"
-	"github.com/didip/tollbooth/v6/limiter"
-	iradix "github.com/hashicorp/go-immutable-radix"
 	"net/http"
 	"net/url"
 	"sort"
+
+	"github.com/didip/tollbooth/v6"
+	"github.com/didip/tollbooth/v6/limiter"
+	iradix "github.com/hashicorp/go-immutable-radix"
 )
 
 type Rules interface {

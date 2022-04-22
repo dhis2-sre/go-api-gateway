@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/dhis2-sre/go-api-gateway/internal/gateway"
-	"github.com/dhis2-sre/go-api-gateway/internal/health"
 	"log"
 	"net/http"
+
+	"github.com/dhis2-sre/go-api-gateway/internal/gateway"
+	"github.com/dhis2-sre/go-api-gateway/internal/health"
 )
 
 func main() {
