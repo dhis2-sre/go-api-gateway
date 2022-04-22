@@ -14,7 +14,7 @@ on:
 
 jobs:
   call-workflow:
-    uses: dhis2-sre/gha-workflows/.github/workflows/instance-manager.yaml@v0.3.0
+    uses: dhis2-sre/gha-workflows/.github/workflows/instance-manager.yaml@v0.3.6
     with:
       PROCESS_NAME: go-api-gateway
       POD_NAME: go-api-gateway

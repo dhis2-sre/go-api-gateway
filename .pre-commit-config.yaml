@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: 754b74671bbdd30059a778d480342a037aff9cd7
+    hooks:
+      - id: go-fmt
+      - id: go-imports
+      - id: go-mod-tidy
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.45.2
+    hooks:
+      - id: golangci-lint
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.24.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

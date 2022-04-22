@@ -5,8 +5,16 @@ clean-cmd = docker compose down --remove-orphans --volumes
 binary:
 	go build -o go-api-gateway -ldflags "-s -w" ./cmd/serve
 
+check:
+	pre-commit run --all-files --show-diff-on-failure
+
 docker-image:
 	IMAGE_TAG=$(tag) docker compose build prod
+
+init:
+	direnv allow
+	pip install pre-commit
+	pre-commit install --install-hooks --overwrite
 
 push-docker-image:
 	IMAGE_TAG=$(tag) docker compose push prod
@@ -42,4 +50,4 @@ publish-helm:
         -F "chart=@api-gateway-$(version).tgz" \
         https://helm-charts.fitfit.dk/api/charts
 
-.PHONY: binary docker-image push-docker-image dev test dev-test helm-chart publish-helm
+.PHONY: binary check docker-image init push-docker-image dev test dev-test helm-chart publish-helm
