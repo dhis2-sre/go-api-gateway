@@ -2,7 +2,6 @@ repos:
   - repo: https://github.com/dnephin/pre-commit-golang
     rev: 754b74671bbdd30059a778d480342a037aff9cd7
     hooks:
-      - id: go-fmt
       - id: go-imports
       - id: go-mod-tidy
   - repo: https://github.com/golangci/golangci-lint
