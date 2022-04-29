@@ -25,7 +25,7 @@ configuration:
     - name: im-user
       url: http://im-user-dev.instance-manager-dev.svc:8080
     - name: im-manager
-      url: http://im-manager-dev-go-chart.instance-manager-dev.svc:8080
+      url: http://im-manager-dev.instance-manager-dev.svc:8080
     - name: im-database-manager
       url: http://im-database-manager-dev.instance-manager-dev.svc:8080
     - name: im-job
