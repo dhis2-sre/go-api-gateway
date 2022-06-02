@@ -122,7 +122,10 @@ configuration:
         target: /databases
       backend: im-database-manager
 
-    ## Jobs
+    - pathPrefix: /databases/external
+      backend: im-database-manager
+
+## Jobs
     - pathPrefix: /jobs/health
       method: GET
       pathReplace:
