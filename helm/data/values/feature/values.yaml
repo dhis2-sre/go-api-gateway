@@ -71,7 +71,7 @@ configuration:
     - pathPrefix: /jwks
       method: GET
 
-    ## Manager
+## Manager
     - pathPrefix: /instances/health
       method: GET
       pathReplace:
