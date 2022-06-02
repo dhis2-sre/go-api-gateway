@@ -108,6 +108,10 @@ configuration:
         target: /databases
       backend: im-database-manager
 
+    - pathPrefix: /databases
+      backend: im-database-manager
+      authentication: jwt
+
     - pathPrefix: /databases/swagger.yaml
       pathReplace:
         target: /databases
@@ -117,10 +121,6 @@ configuration:
       pathReplace:
         target: /databases
       backend: im-database-manager
-
-    - pathPrefix: /databases
-      backend: im-database-manager
-      authentication: jwt
 
     - pathPrefix: /databases/external
       backend: im-database-manager
