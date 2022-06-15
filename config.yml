@@ -1,15 +1,62 @@
+# Sample configuration file tailored to work with Docker
+
 serverPort: 8080
-basePath: /dev
+basePath: ""
 defaultBackend: backend0
+
+authentication:
+  jwks:
+    host: http://jwks/jwks.json
+    index: 0
+    minimumRefreshInterval: 960 # 15 minutes
+#  jwt:
+#    publicKey: |
+#      -----BEGIN PUBLIC KEY-----
+#      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtYrBsSkVGXZKQL13lbmd
+#      xFCQcvi6KIssjz3KOHIko/Da6sxE2w67OL84t98wCYbmIuq6xTK6qpEqEs1LaqQS
+#      DnCs2VNDTLk4D1J42R63OpJQfOfebzhTJLx6KldyK2FRGXWILY7AzcoqyuLk433s
+#      lHk6/yFDYgBA4COofeXZvXtUazuzpBWTZCxpEh341ob6XQ5juLYrqr/80XLYzXiu
+#      N1iz24ulxSnD0GV4cRfHEnnzN3oYFzoYTcTQB6dffNAs/ADHNA9IemyLbT0ugvbf
+#      L5MOEBOftYLRwmGFWrXf5s9jccku0FPid2wtZEwsv5Sa+Yvr36KHtrr+PSFksOB1
+#      0QIDAQAB
+#      -----END PUBLIC KEY-----
+
+# The below token is valid for the next 100 years as of this writing and signed with a private key matching the above public key
+#export ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3OTExNTQ0MTUsImlhdCI6MTYzNzU1NDQxNX0.PtQp6_k5bQ9KE9uk520i4emVnUmxFD8DxyeZsfzgT6CY2oMyXEm7zlIA-4_xz2Q7CrSeqnWxpy0coK9MN0EPE2vhFomTrP6D3l7_lX6Dyn1gH6zWpjC_dRqOSRv3AqS3buZiC-vNwCatLhu6WE74cykBAE2veIr8Gp_ebiITXJKiHBNaTlPk2WEfcJ1NL3g7nafy6l-V4h2-Vj3tapJQiLfpgReIXYIswFYH7En7qy94fL0eOUbZzQI9fOuiXvAN-owR3GYcbwz9Hll23VACWsekMJdDBEgUSdek9JOmRHGxko6FE79-_ClYvF1dGUgZB2mDwY_xF2TOG2q3XDi9Aw
 
 backends:
   - name: backend0
-    url: http://127.0.0.1:8081
+    url: http://backend0:8080
+  - name: backend1
+    url: http://backend1:8080
 
 rules:
-  - pathPrefix: /api/events
-    requestPerSecond: 1
+  - pathPrefix: /health
+    method: GET
+    headers:
+      User-Agent:
+        - HTTPie/3.2.1
+    requestPerSecond: 2
     burst: 2
+
+  - pathPrefix: /blocked
+    block: true
+
+  - pathPrefix: /something
+    pathReplace:
+      target: thing
+      replacement: body
+
   - pathPrefix: /
-    requestPerSecond: 1
-    burst: 2
+    hostname: "*.backend0.127.0.0.1.nip.io"
+
+  - pathPrefix: /
+    hostname: backend0.127.0.0.1.nip.io
+
+  - pathPrefix: /
+    hostname: backend1.127.0.0.1.nip.io
+    backend: backend1
+
+  - pathPrefix: / # catch all
+    backend: backend1
+    authentication: jwt
