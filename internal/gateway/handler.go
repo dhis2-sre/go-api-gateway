@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-type Auth interface {
+type auth interface {
 	ValidateRequest(req *http.Request) (bool, error)
 }
 
-func ProvideHandler(config *Config, router *router, auth Auth) http.HandlerFunc {
+func ProvideHandler(config *Config, router *router, auth auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		log.Printf("%s %s%s", req.Method, req.URL.Host, req.URL.Path)
 
