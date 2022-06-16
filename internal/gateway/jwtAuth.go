@@ -15,18 +15,14 @@ import (
 	"github.com/lestrrat-go/jwx/jwt"
 )
 
-type JwtAuth interface {
-	ValidateRequest(req *http.Request) (bool, error)
-}
-
-func ProvideJwtAuth(c *Config) JwtAuth {
+func ProvideJwtAuth(c *Config) *jwtAuth {
 	publicKey, err := providePublicKey(c.Authentication.Jwt.PublicKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if publicKey != nil {
-		return jwtAuth{c, publicKey, nil}
+		return &jwtAuth{c, publicKey, nil}
 	}
 
 	jwksHost := c.Authentication.Jwks.Host
@@ -36,7 +32,7 @@ func ProvideJwtAuth(c *Config) JwtAuth {
 	}
 
 	if autoRefresh != nil {
-		return jwtAuth{c, nil, autoRefresh}
+		return &jwtAuth{c, nil, autoRefresh}
 	}
 
 	return nil

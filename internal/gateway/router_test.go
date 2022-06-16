@@ -239,7 +239,7 @@ func TestMatchSubdomain(t *testing.T) {
 	assertMatch(t, router, reqB, ruleB.Hostname)
 }
 
-func assertMatch(t *testing.T, router *Router, req *http.Request, hostname string) {
+func assertMatch(t *testing.T, router *router, req *http.Request, hostname string) {
 	match, actualRule := router.match(req)
 
 	assert.Equal(t, true, match)

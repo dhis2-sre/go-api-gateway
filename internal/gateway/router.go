@@ -7,17 +7,23 @@ import (
 	"strings"
 )
 
-func ProvideRouter(rules Rules) *Router {
-	return &Router{
+func ProvideRouter(rules Rules) *router {
+	return &router{
 		Rules: rules,
 	}
 }
 
-type Router struct {
+type Rules interface {
+	Lookup(key []byte) (interface{}, bool)
+	Len() int
+	Walk(fn walkFn)
+}
+
+type router struct {
 	Rules Rules
 }
 
-func (r Router) match(req *http.Request) (bool, *Rule) {
+func (r router) match(req *http.Request) (bool, *Rule) {
 	key := req.Method + req.URL.Path
 	i, match := r.Rules.Lookup([]byte(key))
 
@@ -34,13 +40,13 @@ func (r Router) match(req *http.Request) (bool, *Rule) {
 	return false, nil
 }
 
-func (r Router) matchHostname(rule *Rule, hostname string) bool {
+func (r router) matchHostname(rule *Rule, hostname string) bool {
 	return rule.Hostname == "" ||
 		(rule.Hostname[0:2] == "*." && strings.HasSuffix(hostname, rule.Hostname[1:])) ||
 		hostname == rule.Hostname
 }
 
-func (r Router) getHostname(req *http.Request) string {
+func (r router) getHostname(req *http.Request) string {
 	hostname, _, err := net.SplitHostPort(req.Host)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), ": missing port in address") {
@@ -53,11 +59,11 @@ func (r Router) getHostname(req *http.Request) string {
 	return hostname
 }
 
-func (r Router) matchMethod(rule *Rule, req *http.Request) bool {
+func (r router) matchMethod(rule *Rule, req *http.Request) bool {
 	return rule.Method == "" || req.Method == rule.Method
 }
 
-func (r Router) matchHeaders(rule *Rule, req *http.Request) bool {
+func (r router) matchHeaders(rule *Rule, req *http.Request) bool {
 	for ruleHeader := range rule.Headers {
 		requestHeaderValues, exists := req.Header[ruleHeader]
 		if !exists {
