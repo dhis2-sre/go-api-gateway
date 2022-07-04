@@ -149,3 +149,5 @@ configuration:
 ## Everything else
     - pathPrefix: /
       authentication: jwt
+      requestPerSecond: 2
+      burst: 2
