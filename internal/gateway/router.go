@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ProvideRouter(rules Rules) *router {
+func NewRouter(rules Rules) *router {
 	return &router{
 		Rules: rules,
 	}

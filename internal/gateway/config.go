@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ProvideConfig() (*Config, error) {
+func NewConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()

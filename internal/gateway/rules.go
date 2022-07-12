@@ -11,7 +11,7 @@ import (
 	iradix "github.com/hashicorp/go-immutable-radix"
 )
 
-func ProvideRules(c *Config) (*rules, error) {
+func NewRules(c *Config) (*rules, error) {
 	backendMap, err := mapBackends(c)
 	if err != nil {
 		return &rules{}, err
@@ -119,7 +119,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, er
 }
 
 func newHandler(rule ConfigRule, backendUrl *url.URL) (http.Handler, error) {
-	transparentProxy := provideTransparentProxy(backendUrl)
+	transparentProxy := newTransparentProxy(backendUrl)
 	handler := http.Handler(transparentProxy)
 	if rule.RequestPerSecond != 0 {
 		lmt := newLimiter(rule)

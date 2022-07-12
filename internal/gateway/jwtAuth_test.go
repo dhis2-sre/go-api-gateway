@@ -21,7 +21,7 @@ func Test_jwtAuth_validatePublicKey(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -48,7 +48,7 @@ func Test_jwtAuth_validatePublicKey_bearer(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -75,7 +75,7 @@ func Test_jwtAuth_validatePublicKey_invalidToken(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -106,7 +106,7 @@ func Test_jwtAuth_validateJwks(t *testing.T) {
 		Rules: configRules,
 	}
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -137,7 +137,7 @@ func Test_jwtAuth_validateJwks_bearer(t *testing.T) {
 		Rules: configRules,
 	}
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -168,7 +168,7 @@ func Test_jwtAuth_validateJwks_invalidToken(t *testing.T) {
 		Rules: configRules,
 	}
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)

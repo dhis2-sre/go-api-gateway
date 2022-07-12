@@ -10,21 +10,21 @@ import (
 )
 
 func main() {
-	config, err := gateway.ProvideConfig()
+	config, err := gateway.NewConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	rules, err := gateway.ProvideRules(config)
+	rules, err := gateway.NewRules(config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	router := gateway.ProvideRouter(rules)
+	router := gateway.NewRouter(rules)
 
-	auth := gateway.ProvideJwtAuth(config)
+	auth := gateway.NewJwtAuth(config)
 
-	gatewayHandler := gateway.ProvideHandler(config, router, auth)
+	gatewayHandler := gateway.NewHandler(config, router, auth)
 	http.HandleFunc("/", gatewayHandler)
 
 	http.HandleFunc("/gateway/health", health.Handler)

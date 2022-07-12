@@ -14,7 +14,7 @@ func TestRuleDefinesBackendOrDefaultBackend(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{Rules: configRules}
 
-	_, err := ProvideRules(c)
+	_, err := NewRules(c)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "either a rule needs to define a backend or a default backend needs to be defined", err.Error())
@@ -29,7 +29,7 @@ func TestMatchUnmappedBackend(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{Rules: configRules}
 
-	_, err := ProvideRules(c)
+	_, err := NewRules(c)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "backend map contains not entry for: some-undefined-backend", err.Error())
@@ -44,7 +44,7 @@ func TestLen(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
 	assert.Equal(t, 1, rules.Len())
@@ -58,7 +58,7 @@ func TestLenNoMethod(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
 	assert.Equal(t, 9, rules.Len())
@@ -73,7 +73,7 @@ func TestLookup(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	r, err := ProvideRules(c)
+	r, err := NewRules(c)
 	assert.NoError(t, err)
 
 	i, match := r.Lookup([]byte("GET" + rule.PathPrefix))
@@ -103,7 +103,7 @@ func TestLookupWithTwoRules(t *testing.T) {
 	configRules := []ConfigRule{*ruleA, *ruleB}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	r, err := ProvideRules(c)
+	r, err := NewRules(c)
 	assert.NoError(t, err)
 
 	i, match := r.Lookup([]byte(method + pathPrefix))
@@ -129,7 +129,7 @@ func TestWalk(t *testing.T) {
 	configRules := []ConfigRule{*rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
 	rules.Walk(func(v interface{}) bool {
