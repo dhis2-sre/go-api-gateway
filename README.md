@@ -416,7 +416,6 @@ make publish-helm
 # TODO
 
 * Comment exported types and functions
-* CICD
 * Config validation
 * * If publicKey == nil && c.Rules... wants to authenticate... complain
 * * If config.DefaultBackend == nil && c.Rules... has no backend... complain
