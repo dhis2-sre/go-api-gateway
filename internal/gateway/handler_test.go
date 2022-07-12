@@ -40,14 +40,14 @@ func TestHandler(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -72,14 +72,14 @@ func TestMaxMultipart(t *testing.T) {
 		configRules := []ConfigRule{rule}
 		c := &Config{DefaultBackend: defaultBackend, MaxMultipartSize: 2, Backends: getBackends(), Rules: configRules}
 
-		rules, err := ProvideRules(c)
+		rules, err := NewRules(c)
 		assert.NoError(t, err)
 
-		router := ProvideRouter(rules)
+		router := NewRouter(rules)
 
-		jwtAuth := ProvideJwtAuth(c)
+		jwtAuth := NewJwtAuth(c)
 
-		handler := ProvideHandler(c, router, jwtAuth)
+		handler := NewHandler(c, router, jwtAuth)
 
 		var b bytes.Buffer
 		w := multipart.NewWriter(&b)
@@ -132,14 +132,14 @@ func TestHandlerBlock(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -162,14 +162,14 @@ func TestHandlerBlockFalse(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -191,14 +191,14 @@ func TestHandlerRateLimited(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
@@ -238,14 +238,14 @@ func TestHandlerUserAgentHeader(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -271,14 +271,14 @@ func TestHandlerUserAgentHeaderNoMatch(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -302,14 +302,14 @@ func TestHandlerNoMatch(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/no-match", nil)
 	assert.NoError(t, err)
@@ -338,14 +338,14 @@ func TestHandlerJwtAuthentication(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -376,14 +376,14 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 		Rules:          configRules,
 	}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
@@ -411,14 +411,14 @@ func TestHandlerPathReplacePostfix(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/health/backend0", nil)
 	assert.NoError(t, err)
@@ -444,14 +444,14 @@ func TestHandlerPathReplacePrefix(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/backend0/health", nil)
 	assert.NoError(t, err)
@@ -477,14 +477,14 @@ func TestHandlerPathReplaceWithReplacement(t *testing.T) {
 	configRules := []ConfigRule{rule}
 	c := &Config{DefaultBackend: defaultBackend, Backends: getBackends(), Rules: configRules}
 
-	rules, err := ProvideRules(c)
+	rules, err := NewRules(c)
 	assert.NoError(t, err)
 
-	router := ProvideRouter(rules)
+	router := NewRouter(rules)
 
-	jwtAuth := ProvideJwtAuth(c)
+	jwtAuth := NewJwtAuth(c)
 
-	handler := ProvideHandler(c, router, jwtAuth)
+	handler := NewHandler(c, router, jwtAuth)
 
 	req, err := http.NewRequest("GET", defaultRequestUrl+"/something", nil)
 	assert.NoError(t, err)

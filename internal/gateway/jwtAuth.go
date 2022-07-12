@@ -15,34 +15,30 @@ import (
 	"github.com/lestrrat-go/jwx/jwt"
 )
 
-type JwtAuth interface {
-	ValidateRequest(req *http.Request) (bool, error)
-}
-
-func ProvideJwtAuth(c *Config) JwtAuth {
-	publicKey, err := providePublicKey(c.Authentication.Jwt.PublicKey)
+func NewJwtAuth(c *Config) *jwtAuth {
+	publicKey, err := newPublicKey(c.Authentication.Jwt.PublicKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if publicKey != nil {
-		return jwtAuth{c, publicKey, nil}
+		return &jwtAuth{c, publicKey, nil}
 	}
 
 	jwksHost := c.Authentication.Jwks.Host
-	autoRefresh, err := provideJwkAutoRefresh(jwksHost, c.Authentication.Jwks.MinimumRefreshInterval*time.Second)
+	autoRefresh, err := newJwkAutoRefresh(jwksHost, c.Authentication.Jwks.MinimumRefreshInterval*time.Second)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if autoRefresh != nil {
-		return jwtAuth{c, nil, autoRefresh}
+		return &jwtAuth{c, nil, autoRefresh}
 	}
 
 	return nil
 }
 
-func providePublicKey(publicKeyString string) (*rsa.PublicKey, error) {
+func newPublicKey(publicKeyString string) (*rsa.PublicKey, error) {
 	if publicKeyString != "" {
 		decode, _ := pem.Decode([]byte(publicKeyString))
 		if decode == nil {
@@ -58,7 +54,7 @@ func providePublicKey(publicKeyString string) (*rsa.PublicKey, error) {
 }
 
 // TODO: https://github.com/lestrrat-go/jwx/blob/main/examples/jwk_example_test.go#L188
-func provideJwkAutoRefresh(host string, minRefreshInterval time.Duration) (*jwk.AutoRefresh, error) {
+func newJwkAutoRefresh(host string, minRefreshInterval time.Duration) (*jwk.AutoRefresh, error) {
 	if host != "" {
 		ctx := context.TODO()
 		ar := jwk.NewAutoRefresh(ctx)

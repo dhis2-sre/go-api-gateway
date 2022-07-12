@@ -11,21 +11,15 @@ import (
 	iradix "github.com/hashicorp/go-immutable-radix"
 )
 
-type Rules interface {
-	Lookup(key []byte) (interface{}, bool)
-	Len() int
-	Walk(fn walkFn)
-}
-
-func ProvideRules(c *Config) (Rules, error) {
+func NewRules(c *Config) (*rules, error) {
 	backendMap, err := mapBackends(c)
 	if err != nil {
-		return rules{}, err
+		return &rules{}, err
 	}
 
 	ruleMap, err := mapRules(c, backendMap)
 	if err != nil {
-		return rules{}, err
+		return &rules{}, err
 	}
 
 	ruleTree := iradix.New()
@@ -37,7 +31,7 @@ func ProvideRules(c *Config) (Rules, error) {
 		ruleTree, _, _ = ruleTree.Insert([]byte(key), rules)
 	}
 
-	return rules{ruleTree}, nil
+	return &rules{ruleTree}, nil
 }
 
 type rules struct {
@@ -125,7 +119,7 @@ func mapRules(c *Config, backendMap map[string]*url.URL) (map[string][]*Rule, er
 }
 
 func newHandler(rule ConfigRule, backendUrl *url.URL) (http.Handler, error) {
-	transparentProxy := provideTransparentProxy(backendUrl)
+	transparentProxy := newTransparentProxy(backendUrl)
 	handler := http.Handler(transparentProxy)
 	if rule.RequestPerSecond != 0 {
 		lmt := newLimiter(rule)
