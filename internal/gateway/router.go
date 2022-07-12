@@ -59,10 +59,6 @@ func (r router) getHostname(req *http.Request) string {
 	return hostname
 }
 
-func (r router) matchMethod(rule *Rule, req *http.Request) bool {
-	return rule.Method == "" || req.Method == rule.Method
-}
-
 func (r router) matchHeaders(rule *Rule, req *http.Request) bool {
 	for ruleHeader := range rule.Headers {
 		requestHeaderValues, exists := req.Header[ruleHeader]
