@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"sort"
 	"time"
 
 	"github.com/dhis2-sre/go-api-gateway/internal/gateway"
@@ -31,13 +33,14 @@ func run() error {
 		log.Fatal(err)
 	}
 
-	router := newRouter(config, rules)
+	r := mux.NewRouter()
+	r.HandleFunc("/gateway/health", health.Handler)
 
-	router.HandleFunc("/gateway/health", health.Handler)
+	addRules(r, config, rules)
 
 	printRules(rules)
 
-	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 
 	srv := &http.Server{
 		Handler:      loggedRouter,
@@ -49,9 +52,27 @@ func run() error {
 	return srv.ListenAndServe()
 }
 
-func newRouter(c *gateway.Config, rules []gateway.ConfigRule) *mux.Router {
+func max(i, j string) string {
+	if len(i) > len(j) {
+		return i
+	}
+	return j
+}
+
+func addRules(r *mux.Router, c *gateway.Config, rules []gateway.ConfigRule) {
 	auth := gateway.NewJwtAuth(c)
-	r := mux.NewRouter()
+
+	// TODO: Sort rules by len(pathPrefix, path) where path is s/{*}//
+	sort.SliceStable(rules, func(i, j int) bool {
+		ri := rules[i]
+		rj := rules[j]
+		re := regexp.MustCompile(`{[^}]*}`)
+		iPath := re.ReplaceAllString(ri.Path, "")
+		jPath := re.ReplaceAllString(rj.Path, "")
+		si := max(iPath, ri.PathPrefix)
+		sj := max(jPath, rj.PathPrefix)
+		return len(si) > len(sj)
+	})
 
 	for _, rule := range rules {
 		methods := getMethods(rule)
@@ -85,8 +106,6 @@ func newRouter(c *gateway.Config, rules []gateway.ConfigRule) *mux.Router {
 		}
 		route.Handler(handler2)
 	}
-
-	return r
 }
 
 func getMethods(rule gateway.ConfigRule) []string {
@@ -106,9 +125,9 @@ func printRules(rules []gateway.ConfigRule) {
 
 		logMessage := method
 		if rule.Hostname != "" {
-			logMessage += fmt.Sprintf(" %s%s -> %s", rule.Hostname, rule.PathPrefix, rule.Backend)
+			logMessage += fmt.Sprintf(" %s%s -> %s", rule.Hostname, max(rule.Path, rule.PathPrefix), rule.Backend)
 		} else {
-			logMessage += fmt.Sprintf(" %s -> %s", rule.PathPrefix, rule.Backend)
+			logMessage += fmt.Sprintf(" %s -> %s", max(rule.Path, rule.PathPrefix), rule.Backend)
 		}
 
 		if rule.RequestPerSecond != 0 {
