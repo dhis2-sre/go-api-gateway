@@ -61,11 +61,7 @@ func newJwkAutoRefresh(host string, minRefreshInterval time.Duration) (*jwk.Auto
 		ar.Configure(host, jwk.WithMinRefreshInterval(minRefreshInterval))
 
 		_, err := ar.Refresh(ctx, host)
-		if err != nil {
-			return nil, err
-		}
-
-		return ar, nil
+		return ar, err
 	}
 	return nil, nil
 }
@@ -76,7 +72,7 @@ type jwtAuth struct {
 	autoRefresh *jwk.AutoRefresh
 }
 
-func (j jwtAuth) ValidateRequest(req *http.Request) (bool, error) {
+func (j jwtAuth) ValidateRequest(req *http.Request) error {
 	if j.autoRefresh != nil {
 		return j.validateJwks(req)
 	}
@@ -85,38 +81,35 @@ func (j jwtAuth) ValidateRequest(req *http.Request) (bool, error) {
 		return j.validatePublicKey(req)
 	}
 
-	return false, errors.New("no validator configured")
+	return errors.New("no validator configured")
 }
 
-func (j jwtAuth) validatePublicKey(req *http.Request) (bool, error) {
+func (j jwtAuth) validatePublicKey(req *http.Request) error {
 	return j.validateStaticPublicKey(j.publicKey, req)
 }
 
-func (j jwtAuth) validateStaticPublicKey(publicKey *rsa.PublicKey, req *http.Request) (bool, error) {
-	_, err := jwt.ParseRequest(req,
-		jwt.WithValidate(true),
-		jwt.WithVerify(jwa.RS256, publicKey),
-	)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (j jwtAuth) validateJwks(req *http.Request) (bool, error) {
+func (j jwtAuth) validateJwks(req *http.Request) error {
 	keySet, err := j.autoRefresh.Fetch(context.TODO(), j.config.Authentication.Jwks.Host)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if key, ok := keySet.Get(j.config.Authentication.Jwks.Index); ok {
 		publicKey := &rsa.PublicKey{}
 		err := key.Raw(publicKey)
 		if err != nil {
-			return false, err
+			return err
 		}
 		return j.validateStaticPublicKey(publicKey, req)
 	}
 
-	return false, nil
+	return nil
+}
+
+func (j jwtAuth) validateStaticPublicKey(publicKey *rsa.PublicKey, req *http.Request) error {
+	_, err := jwt.ParseRequest(req,
+		jwt.WithValidate(true),
+		jwt.WithVerify(jwa.RS256, publicKey),
+	)
+	return err
 }

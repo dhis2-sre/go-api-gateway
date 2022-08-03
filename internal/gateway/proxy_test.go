@@ -3,7 +3,6 @@ package gateway
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,10 +13,15 @@ func TestTransparentProxyHandler(t *testing.T) {
 
 	backend := "http://backend0:8080"
 
-	backendUrl, err := url.Parse(backend)
-	assert.NoError(t, err)
+	c := &Config{
+		Authentication: Authentication{
+			Jwt: Jwt{publicKey},
+		},
+	}
 
-	proxy := newTransparentProxy(backendUrl)
+	auth := NewJwtAuth(c)
+	proxy, err := newTransparentProxy(ConfigRule{Backend: backend}, auth)
+	assert.NoError(t, err)
 
 	req, err := http.NewRequest("GET", "/health", nil)
 	assert.NoError(t, err)

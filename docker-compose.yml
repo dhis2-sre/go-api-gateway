@@ -32,7 +32,8 @@ services:
     <<: *common-dev-test
     ports:
       - "8080:8080"
-    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/serve"
+#    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/serve"
+    command: reflex -r "\.go|\.yml$$" -s -- sh -c "go run ./cmd/mux"
 
   backend0:
     image: tons/whoami-go:0.5.0

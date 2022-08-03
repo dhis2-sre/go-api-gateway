@@ -4,7 +4,8 @@ go 1.18
 
 require (
 	github.com/didip/tollbooth/v6 v6.1.2
-	github.com/hashicorp/go-immutable-radix v1.3.1
+	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/mux v1.8.0
 	github.com/lestrrat-go/jwx v1.2.25
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
@@ -13,10 +14,10 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
+	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-pkgz/expirable-cache v0.0.3 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.1 // indirect

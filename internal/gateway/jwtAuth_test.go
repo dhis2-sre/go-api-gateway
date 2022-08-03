@@ -28,10 +28,7 @@ func Test_jwtAuth_validatePublicKey(t *testing.T) {
 
 	req.Header.Set("Authorization", validAccessToken)
 
-	valid, err := jwtAuth.ValidateRequest(req)
-	assert.NoError(t, err)
-
-	assert.True(t, valid)
+	assert.NoError(t, jwtAuth.ValidateRequest(req))
 }
 
 func Test_jwtAuth_validatePublicKey_bearer(t *testing.T) {
@@ -55,10 +52,7 @@ func Test_jwtAuth_validatePublicKey_bearer(t *testing.T) {
 
 	req.Header.Set("Authorization", "Bearer "+validAccessToken)
 
-	valid, err := jwtAuth.ValidateRequest(req)
-	assert.NoError(t, err)
-
-	assert.True(t, valid)
+	assert.NoError(t, jwtAuth.ValidateRequest(req))
 }
 
 func Test_jwtAuth_validatePublicKey_invalidToken(t *testing.T) {
@@ -82,10 +76,7 @@ func Test_jwtAuth_validatePublicKey_invalidToken(t *testing.T) {
 
 	req.Header.Set("Authorization", "bla bla")
 
-	valid, err := jwtAuth.ValidateRequest(req)
-	assert.Error(t, err)
-
-	assert.False(t, valid)
+	assert.Error(t, jwtAuth.ValidateRequest(req))
 }
 
 func Test_jwtAuth_validateJwks(t *testing.T) {
@@ -113,10 +104,7 @@ func Test_jwtAuth_validateJwks(t *testing.T) {
 
 	req.Header.Set("Authorization", validAccessToken)
 
-	valid, err := jwtAuth.ValidateRequest(req)
-	assert.NoError(t, err)
-
-	assert.True(t, valid)
+	assert.NoError(t, jwtAuth.ValidateRequest(req))
 }
 
 func Test_jwtAuth_validateJwks_bearer(t *testing.T) {
@@ -144,10 +132,7 @@ func Test_jwtAuth_validateJwks_bearer(t *testing.T) {
 
 	req.Header.Set("Authorization", "Bearer "+validAccessToken)
 
-	valid, err := jwtAuth.ValidateRequest(req)
-	assert.NoError(t, err)
-
-	assert.True(t, valid)
+	assert.NoError(t, jwtAuth.ValidateRequest(req))
 }
 
 func Test_jwtAuth_validateJwks_invalidToken(t *testing.T) {
@@ -175,8 +160,5 @@ func Test_jwtAuth_validateJwks_invalidToken(t *testing.T) {
 
 	req.Header.Set("Authorization", "bla bla")
 
-	valid, err := jwtAuth.ValidateRequest(req)
-	assert.Error(t, err)
-
-	assert.False(t, valid)
+	assert.Error(t, jwtAuth.ValidateRequest(req))
 }

@@ -99,16 +99,22 @@ configuration:
     - pathPrefix: /
       authentication: jwt
 
-  groups:
-    - pathPrefix: /databases
-      pathReplace:
-        target: /databases
-      backend: im-database-manager
-      rules:
-        - pathPrefix: /swagger.yaml
-        - pathPrefix: /docs
-    - pathPrefix: /databases
-      backend: im-database-manager
-      authentication: jwt
-      rules:
+  router:
+    - backend: database-manager
+      routes:
+        - path: /databases
+          pathReplace:
+            target: /databases
+          backend: im-database-manager
+          methods:
+            - get
+            - post
+          headers:
+            User-Agent:
+              - HTTPie/3.2.1
+
         - pathPrefix: /databases
+          backend: im-database-manager
+          authentication: jwt
+          rules:
+            - pathPrefix: /databases
