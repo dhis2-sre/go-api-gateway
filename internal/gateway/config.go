@@ -75,6 +75,7 @@ type Backend struct {
 
 type ConfigRule struct {
 	Method           string
+	Path             string
 	PathPrefix       string
 	Hostname         string
 	PathReplace      PathReplace

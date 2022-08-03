@@ -39,6 +39,10 @@ configuration:
 
   rules:
 ## User
+    - path: /groups/{groupName}/instances/{instanceName}
+      method: GET
+      backend: im-manager
+
     - pathPrefix: /users/health
       method: GET
       pathReplace:
@@ -46,9 +50,6 @@ configuration:
 
     - pathPrefix: /users
       method: POST
-
-    - pathPrefix: /users/{id}
-      method: GET
 
     - pathPrefix: /tokens
       method: POST
@@ -61,19 +62,6 @@ configuration:
       authentication: jwt
 
     - pathPrefix: /groups
-      method: POST
-      authentication: jwt
-
-    - pathPrefix: /groups/{name}
-      method: GET
-      authentication: jwt
-
-    - pathPrefix: /groups/{name}/users/{id}
-      method: POST
-      authentication: jwt
-
-    - pathPrefix: /groups/{name}/cluster-configuration
-      method: POST
       authentication: jwt
 
     - pathPrefix: /users/docs
@@ -98,23 +86,7 @@ configuration:
       backend: im-manager
       authentication: jwt
 
-    - pathPrefix: /stacks/{stack}
-      backend: im-manager
-      authentication: jwt
-
     - pathPrefix: /instances
-      backend: im-manager
-      authentication: jwt
-
-    - pathPrefix: /instances/{instance}
-      backend: im-manager
-      authentication: jwt
-
-    - pathPrefix: /instances/{instance}/logs
-      backend: im-manager
-      authentication: jwt
-
-    - pathPrefix: /instances-name-to-id/{group}/{instance}
       backend: im-manager
       authentication: jwt
 
@@ -140,45 +112,8 @@ configuration:
         target: /databases
       backend: im-database-manager
 
-    - pathPrefix: /databases/{id}/url
-      backend: im-database-manager
-      method: GET
-
-    - pathPrefix: /databases/external/{uuid}
-      backend: im-database-manager
-      method: GET
-
     - pathPrefix: /databases
       backend: im-database-manager
-      authentication: jwt
-
-    - pathPrefix: /databases/{id}/copy
-      backend: im-database-manager
-      method: POST
-      authentication: jwt
-
-    - pathPrefix: /databases/{id}/download
-      backend: im-database-manager
-      method: GET
-      authentication: jwt
-
-    - pathPrefix: /databases/{id}
-      backend: im-database-manager
-      authentication: jwt
-
-    - pathPrefix: /databases/{id}/lock
-      backend: im-database-manager
-      method: POST
-      authentication: jwt
-
-    - pathPrefix: /databases/{id}/unlock
-      backend: im-database-manager
-      method: DELETE
-      authentication: jwt
-
-    - pathPrefix: /databases/{id}/external
-      backend: im-database-manager
-      method: POST
       authentication: jwt
 
     - pathPrefix: /databases/swagger.yaml

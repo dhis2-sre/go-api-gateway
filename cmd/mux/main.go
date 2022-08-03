@@ -56,9 +56,13 @@ func newRouter(c *gateway.Config, rules []gateway.ConfigRule) *mux.Router {
 	for _, rule := range rules {
 		methods := getMethods(rule)
 		route := r.Methods(methods...)
+
+		if rule.Path != "" {
+			route.Path(rule.Path)
+		}
+
 		if rule.PathPrefix != "" {
-			route.Path(rule.PathPrefix)
-			//			route.PathPrefix(rule.PathPrefix)
+			route.PathPrefix(rule.PathPrefix)
 		}
 
 		if rule.Hostname != "" {
