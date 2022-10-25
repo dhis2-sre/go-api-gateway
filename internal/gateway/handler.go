@@ -12,6 +12,15 @@ type auth interface {
 
 func NewHandler(config *Config, router *router, auth auth) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == "OPTIONS" {
+			w.Header().Add("Access-Control-Allow-Origin", "*")
+			w.Header().Add("Access-Control-Allow-Methods", "DELETE, POST, PUT, GET, OPTIONS")
+			w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+			w.Header().Add("Access-Control-Allow-Credentials", "true")
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		log.Printf("%s %s%s", req.Method, req.URL.Host, req.URL.Path)
 
 		if match, rule := router.match(req); match {
