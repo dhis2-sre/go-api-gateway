@@ -86,6 +86,10 @@ configuration:
       backend: im-manager
       authentication: jwt
 
+    - pathPrefix: /presets
+      backend: im-manager
+      authentication: jwt
+
     - pathPrefix: /instances/health
       pathReplace:
         target: /instances
@@ -145,6 +149,10 @@ configuration:
       pathReplace:
         target: /jobs
       backend: im-job
+
+## CORS
+    - pathPrefix: /
+      method: OPTIONS
 
 ## Everything else
     - pathPrefix: /

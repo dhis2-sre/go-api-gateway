@@ -71,7 +71,7 @@ configuration:
     - pathPrefix: /jwks
       method: GET
 
-    ## Manager
+## Manager
     - pathPrefix: /instances/health
       method: GET
       pathReplace:
@@ -83,6 +83,10 @@ configuration:
       authentication: jwt
 
     - pathPrefix: /instances
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /presets
       backend: im-manager
       authentication: jwt
 
@@ -145,6 +149,10 @@ configuration:
       pathReplace:
         target: /jobs
       backend: im-job
+
+## CORS
+    - pathPrefix: /
+      method: OPTIONS
 
 ## Everything else
     - pathPrefix: /
