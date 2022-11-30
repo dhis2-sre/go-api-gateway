@@ -36,6 +36,7 @@ configuration:
       host: http://im-user-feature.instance-manager-feature.svc:8080/skaffold/jwks
       index: 0
       minimumRefreshInterval: 960 # 15 minutes
+    authenticateHttpOptionsMethod: false
 
   rules:
 ## User

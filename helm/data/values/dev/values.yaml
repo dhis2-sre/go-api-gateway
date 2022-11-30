@@ -36,6 +36,7 @@ configuration:
       host: http://im-user-dev.instance-manager-dev.svc:8080/jwks
       index: 0
       minimumRefreshInterval: 960 # 15 minutes
+    authenticateHttpOptionsMethod: false
 
   rules:
 ## User
@@ -149,10 +150,6 @@ configuration:
       pathReplace:
         target: /jobs
       backend: im-job
-
-## CORS
-    - pathPrefix: /
-      method: OPTIONS
 
 ## Everything else
     - pathPrefix: /

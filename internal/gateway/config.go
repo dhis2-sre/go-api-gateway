@@ -54,8 +54,9 @@ type Config struct {
 }
 
 type Authentication struct {
-	Jwt  Jwt
-	Jwks Jwks
+	Jwt                           Jwt
+	Jwks                          Jwks
+	AuthenticateHttpOptionsMethod bool
 }
 
 type Jwt struct {

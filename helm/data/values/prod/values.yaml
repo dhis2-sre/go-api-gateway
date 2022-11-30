@@ -36,6 +36,7 @@ configuration:
       host: http://im-user-prod.instance-manager-prod.svc:8080/jwks
       index: 0
       minimumRefreshInterval: 960 # 15 minutes
+    authenticateHttpOptionsMethod: false
 
   rules:
 ## User
