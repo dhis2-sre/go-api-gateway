@@ -87,6 +87,14 @@ configuration:
       backend: im-manager
       authentication: jwt
 
+    - pathPrefix: /integrations
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /presets
+      backend: im-manager
+      authentication: jwt
+
     - pathPrefix: /instances/health
       pathReplace:
         target: /instances

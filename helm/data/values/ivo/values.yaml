@@ -72,7 +72,7 @@ configuration:
     - pathPrefix: /jwks
       method: GET
 
-    ## Manager
+## Manager
     - pathPrefix: /instances/health
       method: GET
       pathReplace:
@@ -84,6 +84,14 @@ configuration:
       authentication: jwt
 
     - pathPrefix: /instances
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /integrations
+      backend: im-manager
+      authentication: jwt
+
+    - pathPrefix: /presets
       backend: im-manager
       authentication: jwt
 
