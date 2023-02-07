@@ -49,7 +49,7 @@ func TestHandler(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -105,7 +105,7 @@ func TestMaxMultipart(t *testing.T) {
 			assert.NoError(t, err)
 		}
 
-		req, err := http.NewRequest("GET", defaultRequestUrl+"/health", &b)
+		req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", &b)
 		assert.NoError(t, err)
 
 		req.Header.Set("Content-Type", w.FormDataContentType())
@@ -141,7 +141,7 @@ func TestHandlerBlock(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -171,7 +171,7 @@ func TestHandlerBlockFalse(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -203,7 +203,7 @@ func TestHandlerRateLimited(t *testing.T) {
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
-	req, err := http.NewRequest("GET", ts.URL+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, ts.URL+"/health", nil)
 	assert.NoError(t, err)
 
 	client := &http.Client{}
@@ -247,7 +247,7 @@ func TestHandlerUserAgentHeader(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	req.Header.Set("User-Agent", "Go tests")
@@ -280,7 +280,7 @@ func TestHandlerUserAgentHeaderNoMatch(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	req.Header.Set("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)")
@@ -311,7 +311,7 @@ func TestHandlerNoMatch(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/no-match", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/no-match", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -347,7 +347,7 @@ func TestHandlerJwtAuthentication(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	req.Header.Set("Authorization", validAccessToken)
@@ -385,7 +385,7 @@ func TestHandlerJwtAuthenticationInvalidToken(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health", nil)
 	assert.NoError(t, err)
 
 	req.Header.Set("Authorization", "bla bla")
@@ -420,7 +420,7 @@ func TestHandlerPathReplacePostfix(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/health/backend0", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/health/backend0", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -453,7 +453,7 @@ func TestHandlerPathReplacePrefix(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/backend0/health", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/backend0/health", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
@@ -486,7 +486,7 @@ func TestHandlerPathReplaceWithReplacement(t *testing.T) {
 
 	handler := NewHandler(c, router, jwtAuth)
 
-	req, err := http.NewRequest("GET", defaultRequestUrl+"/something", nil)
+	req, err := http.NewRequest(http.MethodGet, defaultRequestUrl+"/something", nil)
 	assert.NoError(t, err)
 
 	recorder := httptest.NewRecorder()
