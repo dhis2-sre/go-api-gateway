@@ -1,16 +1,24 @@
+fail_fast: true
+
 default_install_hook_types:
   - pre-commit
   - commit-msg
 repos:
-  - repo: https://github.com/dnephin/pre-commit-golang
-    rev: 754b74671bbdd30059a778d480342a037aff9cd7
+  - repo: https://github.com/tekwizely/pre-commit-golang
+    rev: v1.0.0-rc.1
     hooks:
       - id: go-imports
       - id: go-mod-tidy
+      - id: go-sec-repo-mod
+
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.45.2
+    rev: v1.51.1
     hooks:
       - id: golangci-lint
+        args:
+          - "--timeout=3m"
+          - "--enable=gocritic"
+
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v2.24.0
     hooks:

@@ -1,6 +1,6 @@
 module github.com/dhis2-sre/go-api-gateway
 
-go 1.18
+go 1.20
 
 require (
 	github.com/didip/tollbooth/v6 v6.1.2

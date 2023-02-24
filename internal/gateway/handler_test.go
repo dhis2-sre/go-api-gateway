@@ -61,7 +61,6 @@ func TestHandler(t *testing.T) {
 
 func TestMaxMultipart(t *testing.T) {
 	// TODO:
-	return
 	/*
 		expected := http.StatusOK
 
