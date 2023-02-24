@@ -1,20 +1,23 @@
 tag ?= latest
-version ?= $(shell yq e '.version' helm/Chart.yaml)
 clean-cmd = docker compose down --remove-orphans --volumes
 
-binary:
-	go build -o go-api-gateway -ldflags "-s -w" ./cmd/serve
+init:
+	pip install pre-commit
+	pre-commit install --install-hooks --overwrite
+
+	go install github.com/direnv/direnv@latest
+	direnv version
+
+	go install golang.org/x/tools/cmd/goimports@latest
+
+	go install github.com/securego/gosec/v2/cmd/gosec@latest
+	gosec --version
 
 check:
 	pre-commit run --all-files --show-diff-on-failure
 
 docker-image:
 	IMAGE_TAG=$(tag) docker compose build prod
-
-init:
-	direnv allow
-	pip install pre-commit
-	pre-commit install --install-hooks --overwrite
 
 push-docker-image:
 	IMAGE_TAG=$(tag) docker compose push prod
@@ -24,9 +27,6 @@ smoke-test:
 
 dev:
 	docker compose up --build dev backend0 backend1 jwks
-
-cluster-dev:
-	skaffold dev
 
 test: clean
 	docker compose up -d backend0 backend1 jwks
@@ -42,12 +42,4 @@ clean:
 	$(clean-cmd)
 	go clean
 
-helm-chart:
-	@helm package helm/chart
-
-publish-helm:
-	@curl --user "$(CHART_AUTH_USER):$(CHART_AUTH_PASS)" \
-        -F "chart=@api-gateway-$(version).tgz" \
-        https://helm-charts.fitfit.dk/api/charts
-
-.PHONY: binary check docker-image init push-docker-image dev test dev-test helm-chart publish-helm
+.PHONY: init check docker-image push-docker-image dev test dev-test
