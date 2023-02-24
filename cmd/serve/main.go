@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/dhis2-sre/go-api-gateway/internal/gateway"
 	"github.com/dhis2-sre/go-api-gateway/internal/health"
@@ -32,8 +33,15 @@ func main() {
 	printRules(router.Rules)
 
 	port := config.ServerPort
+	server := &http.Server{
+		Addr:              ":" + port,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
 	log.Println("Listening on port: " + port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	err = server.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func printRules(rules gateway.Rules) {
