@@ -38,7 +38,7 @@ func main() {
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 	server.Handler = mux
-	log.Println("mux Listening on port: " + port)
+	log.Println("Listening on port: " + port)
 	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
