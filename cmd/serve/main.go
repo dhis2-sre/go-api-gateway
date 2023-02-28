@@ -25,17 +25,18 @@ func main() {
 
 	auth := gateway.NewJwtAuth(config)
 
-	gatewayHandler := gateway.NewHandler(config, router, auth)
-	http.HandleFunc("/", gatewayHandler)
-
-	http.HandleFunc("/gateway/health", health.Handler)
-
 	printRules(router.Rules)
+
+	mux := http.NewServeMux()
+	gatewayHandler := gateway.NewHandler(config, router, auth)
+	mux.HandleFunc("/", gatewayHandler)
+	mux.HandleFunc("/gateway/health", health.Handler)
 
 	port := config.ServerPort
 	server := &http.Server{
 		Addr:              ":" + port,
 		ReadHeaderTimeout: 3 * time.Second,
+		Handler:           mux,
 	}
 	log.Println("Listening on port: " + port)
 	err = server.ListenAndServe()
