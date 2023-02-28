@@ -36,6 +36,7 @@ func main() {
 	server := &http.Server{
 		Addr:              ":" + port,
 		ReadHeaderTimeout: 3 * time.Second,
+		Handler: mux,
 	}
 	server.Handler = mux
 	log.Println("Listening on port: " + port)
