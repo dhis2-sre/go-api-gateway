@@ -26,8 +26,6 @@ configuration:
       url: http://im-user-ivo.instance-manager-ivo.svc:8080
     - name: im-manager
       url: http://im-manager-ivo.instance-manager-ivo.svc:8080
-    - name: im-database-manager
-      url: http://im-database-manager-ivo.instance-manager-ivo.svc:8080
     - name: im-job
       url: http://im-job-ivo.instance-manager-ivo.svc:8080
 

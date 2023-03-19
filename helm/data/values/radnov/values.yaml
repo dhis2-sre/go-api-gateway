@@ -26,8 +26,6 @@ configuration:
       url: http://im-user-radnov.instance-manager-radnov.svc:8080
     - name: im-manager
       url: http://im-manager-radnov.instance-manager-radnov.svc:8080
-    - name: im-database-manager
-      url: http://im-database-manager-radnov.instance-manager-radnov.svc:8080
     - name: im-job
       url: http://im-job-radnov.instance-manager-radnov.svc:8080
 

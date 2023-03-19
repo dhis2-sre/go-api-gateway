@@ -26,8 +26,6 @@ configuration:
       url: http://im-user-tons.instance-manager-tons.svc:8080
     - name: im-manager
       url: http://im-manager-tons.instance-manager-tons.svc:8080
-    - name: im-database-manager
-      url: http://im-database-manager-tons.instance-manager-tons.svc:8080
     - name: im-job
       url: http://im-job-tons.instance-manager-tons.svc:8080
 
