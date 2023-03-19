@@ -26,8 +26,6 @@ configuration:
       url: http://im-user-ivo.instance-manager-ivo.svc:8080
     - name: im-manager
       url: http://im-manager-ivo.instance-manager-ivo.svc:8080
-    - name: im-database-manager
-      url: http://im-database-manager-ivo.instance-manager-ivo.svc:8080
     - name: im-job
       url: http://im-job-ivo.instance-manager-ivo.svc:8080
 
@@ -111,28 +109,12 @@ configuration:
       backend: im-manager
 
 ## Database Manager
-    - pathPrefix: /databases/health
-      method: GET
-      pathReplace:
-        target: /databases
-      backend: im-database-manager
-
     - pathPrefix: /databases
-      backend: im-database-manager
+      backend: im-manager
       authentication: jwt
 
-    - pathPrefix: /databases/swagger.yaml
-      pathReplace:
-        target: /databases
-      backend: im-database-manager
-
-    - pathPrefix: /databases/docs
-      pathReplace:
-        target: /databases
-      backend: im-database-manager
-
     - pathPrefix: /databases/external
-      backend: im-database-manager
+      backend: im-manager
 
 ## Jobs
     - pathPrefix: /jobs/health
