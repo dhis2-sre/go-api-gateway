@@ -1,0 +1,30 @@
+rules:
+  - pathPrefix: /health
+    method: GET
+    headers:
+      User-Agent:
+        - HTTPie/3.2.1
+    requestPerSecond: 2
+    burst: 2
+
+  - pathPrefix: /blocked
+    block: true
+
+  - pathPrefix: /something
+    pathReplace:
+      target: thing
+      replacement: body
+
+  - pathPrefix: /
+    hostname: "*.backend0.127.0.0.1.nip.io"
+
+  - pathPrefix: /
+    hostname: backend0.127.0.0.1.nip.io
+
+  - pathPrefix: /
+    hostname: backend1.127.0.0.1.nip.io
+    backend: backend1
+
+  - pathPrefix: / # catch all
+    backend: backend1
+    authentication: jwt
